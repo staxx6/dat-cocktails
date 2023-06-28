@@ -34,6 +34,10 @@ export class ApiService implements IApiService {
     return foundRecipes;
   }
 
+  getAllRecipes(): Recipe[] {
+    return this._recipes;
+  }
+
   private loadRecipes(): Recipe[] {
 
     if (!recipesJson) {

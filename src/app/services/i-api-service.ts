@@ -19,5 +19,6 @@ export interface IngredientFilter extends Filter {
 })
 export abstract class IApiService {
     abstract getRecipes(filter: RecipeFilter): Recipe[];
+    abstract getAllRecipes(): Recipe[];
     abstract getIngredients(filter: IngredientFilter): Ingredient[];
 }

@@ -1,0 +1,4 @@
+<a *ngIf="recipe" class="list-item" [routerLink]="[recipe.id]">
+  <img *ngIf="recipe.picture" [src]="recipe.picture" alt="Cover" />
+  <h2>{{ recipe.name }}</h2>
+</a>
