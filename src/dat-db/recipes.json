@@ -1,0 +1,33 @@
+[
+    {
+        "id": 1,
+        "name": "Caipirinha - Batida De Limao",
+        "recipeIngredients": [
+            {
+                "ingredientId": 1,
+                "measuringUnit": "cl",
+                "amount": 3
+            },
+            {
+                "ingredientId": 2,
+                "measuringUnit": "none",
+                "amount": 1
+            },
+            {
+                "ingredientId": 4,
+                "measuringUnit": "cl",
+                "amount": 2
+            }
+        ],
+        "steps": [
+            {
+                "orderNumber": 1,
+                "text": "Enden der Limette abschneiden"
+            },
+            {
+                "orderNumber": 2,
+                "text": "TODO"
+            }
+        ]
+    }
+]
