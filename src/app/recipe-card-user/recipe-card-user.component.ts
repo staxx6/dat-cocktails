@@ -1,30 +1,29 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IApiService } from '../services/i-api-service';
-import { Recipe, RecipeIngredient } from '../shared/i-recipe';
+import { ActivatedRoute, RouterLink } from "@angular/router";
+import { RecipeCardComponent } from "../recipe-card/recipe-card.component";
 
 @Component({
-  selector: 'app-recipe-card-user',
+  selector: 'recipe-card-user',
   standalone: true,
-  imports: [CommonModule],
+  imports: [
+    CommonModule,
+    RouterLink,
+    RecipeCardComponent
+  ],
   templateUrl: './recipe-card-user.component.html',
   styleUrls: ['./recipe-card-user.component.scss']
 })
-export class RecipeCardUserComponent {
-
-  recipe: Recipe;
+export class RecipeCardUserComponent extends RecipeCardComponent {
 
   constructor(
-    private _apiService: IApiService
+    apiService: IApiService,
+    route: ActivatedRoute
   ) {
-    // FIXME:
-    const firstRecipe = _apiService.getRecipes({ id: 1 })
-    this.recipe = firstRecipe[0];
-  }
-
-  // Nicht irgendwo speichern?
-  getIngredientName(recipeIngredient: RecipeIngredient): string {
-    const ingredients = this._apiService.getIngredients({ id: recipeIngredient.ingredientId });
-    return ingredients[0].name;
+    super(
+      apiService,
+      route
+    );
   }
 }

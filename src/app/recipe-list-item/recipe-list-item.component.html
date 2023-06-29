@@ -1,4 +1,11 @@
-<a *ngIf="recipe" class="list-item" [routerLink]="[recipe.id]">
-  <img *ngIf="recipe.picture" [src]="recipe.picture" alt="Cover" />
-  <h2>{{ recipe.name }}</h2>
-</a>
+<div *ngIf="recipe" class="list-item">
+  <img *ngIf="recipe.picture" [src]="recipe.picture" alt="Cover"/>
+  <a [routerLink]="['cocktail', recipe.id]">
+    <h2>{{ recipe.name }}</h2>
+  </a>
+  <ul *ngIf="!isBartenderUser">
+    <li *ngFor="let ingredient of recipe.recipeIngredients" class="ingredient">
+      {{getIngredientName(ingredient)}}
+    </li>
+  </ul>
+</div>

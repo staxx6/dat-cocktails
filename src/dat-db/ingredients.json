@@ -1,18 +1,34 @@
 [
-    {
-        "id": 1,
-        "name": "Cachaca"
-    },
-    {
-        "id": 2,
-        "name": "Limette"
-    },
-    {
-        "id": 3,
-        "name": "weißer Rohrzucker"
-    },
-    {
-        "id": 4,
-        "name": "Zuckerssirup"
-    }
+  {
+    "id": 1,
+    "name": "Cachaca"
+  },
+  {
+    "id": 2,
+    "name": "Limette"
+  },
+  {
+    "id": 3,
+    "name": "weißer Rohrzucker"
+  },
+  {
+    "id": 4,
+    "name": "Zuckerssirup"
+  },
+  {
+    "id": 5,
+    "name": "Zitronensaft"
+  },
+  {
+    "id": 6,
+    "name": "Whisky"
+  },
+  {
+    "id": 7,
+    "name": "Eiweiß"
+  },
+  {
+    "id": 8,
+    "name": "Orange Bitter"
+  }
 ]

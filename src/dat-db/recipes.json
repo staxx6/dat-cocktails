@@ -1,33 +1,90 @@
 [
-    {
-        "id": 1,
-        "name": "Caipirinha - Batida De Limao",
-        "recipeIngredients": [
-            {
-                "ingredientId": 1,
-                "measuringUnit": "cl",
-                "amount": 3
-            },
-            {
-                "ingredientId": 2,
-                "measuringUnit": "none",
-                "amount": 1
-            },
-            {
-                "ingredientId": 4,
-                "measuringUnit": "cl",
-                "amount": 2
-            }
-        ],
-        "steps": [
-            {
-                "orderNumber": 1,
-                "text": "Enden der Limette abschneiden"
-            },
-            {
-                "orderNumber": 2,
-                "text": "TODO"
-            }
-        ]
-    }
+  {
+    "id": 1,
+    "name": "Caipirinha - Batida De Limao",
+    "recipeIngredients": [
+      {
+        "ingredientId": 1,
+        "measuringUnit": "cl",
+        "amount": 3
+      },
+      {
+        "ingredientId": 2,
+        "measuringUnit": "none",
+        "amount": 1
+      },
+      {
+        "ingredientId": 4,
+        "measuringUnit": "cl",
+        "amount": 2
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "Enden der Limette abschneiden"
+      },
+      {
+        "orderNumber": 2,
+        "text": "TODO"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "Whisky Sour",
+    "recipeIngredients": [
+      {
+        "ingredientId": 5,
+        "measuringUnit": "oz",
+        "amount": 2
+      },
+      {
+        "ingredientId": 4,
+        "measuringUnit": "oz",
+        "amount": 1
+      },
+      {
+        "ingredientId": 6,
+        "measuringUnit": "oz",
+        "amount": 2
+      },
+      {
+        "ingredientId": 7,
+        "measuringUnit": "gtl",
+        "amount": 1
+      },
+      {
+        "ingredientId": 8,
+        "measuringUnit": "drop",
+        "amount": 5
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "Eiweiß in den Shaker geben."
+      },
+      {
+        "orderNumber": 2,
+        "text": "Restliche Zutaten in den Shaker geben."
+      },
+      {
+        "orderNumber": 3,
+        "text": "20 Sekunden shaken."
+      },
+      {
+        "orderNumber": 4,
+        "text": "Eis entfernen."
+      },
+      {
+        "orderNumber": 5,
+        "text": "Nochmal shaken 15-20 Sekunden."
+      },
+      {
+        "orderNumber": 6,
+        "text": "Abseihen ins Glas."
+      }
+    ]
+  }
 ]

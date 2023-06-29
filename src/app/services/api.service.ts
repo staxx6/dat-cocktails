@@ -2,12 +2,8 @@ import { Injectable } from '@angular/core';
 
 import recipesJson from '../../dat-db/recipes.json';
 import ingredientsJson from '../../dat-db/ingredients.json';
-import {
-  IApiService,
-  IngredientFilter,
-  RecipeFilter
-} from './i-api-service';
-import { Recipe, RecipeIngredient } from '../shared/i-recipe';
+import { IApiService, IngredientFilter, RecipeFilter } from './i-api-service';
+import { MeasuringUnit, Recipe, RecipeIngredient } from '../shared/i-recipe';
 import { Ingredient } from '../shared/i-ingredient';
 
 @Injectable({
@@ -59,6 +55,7 @@ export class ApiService implements IApiService {
         const newRecipeIngredient = {} as RecipeIngredient;
         newRecipeIngredient.ingredientId = recipeIngredient.ingredientId;
         newRecipeIngredient.amount = recipeIngredient.amount;
+        newRecipeIngredient.measuringUnit = MeasuringUnit[recipeIngredient.measuringUnit as keyof typeof MeasuringUnit];
         newRecipe.recipeIngredients.push(newRecipeIngredient);
       });
       newRecipe.steps = recipe.steps;

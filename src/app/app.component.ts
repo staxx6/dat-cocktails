@@ -5,7 +5,7 @@ import { IApiService } from './services/i-api-service';
 import { RecipeCardUserComponent } from './recipe-card-user/recipe-card-user.component';
 
 @Component({
-  selector: 'app-root',
+  selector: 'root',
   standalone: true,
   imports: [CommonModule, RouterOutlet, RecipeCardUserComponent],
   templateUrl: './app.component.html',

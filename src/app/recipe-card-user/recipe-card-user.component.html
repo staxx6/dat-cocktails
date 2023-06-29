@@ -1,5 +1,7 @@
 <h2>{{recipe.name}}</h2>
-<br>
-<span *ngFor="let ingredient of recipe.recipeIngredients">
-    {{getIngredientName(ingredient)}}
-</span>
+<ul>
+  <li *ngFor="let ingredient of recipe.recipeIngredients" class="ingredient">
+      {{getIngredientName(ingredient)}}
+  </li>
+</ul>
+<a class="return-btn" routerLink="../..">Zurück</a>

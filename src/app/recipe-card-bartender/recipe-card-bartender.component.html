@@ -1,0 +1,47 @@
+<h2>{{recipe.name}}</h2>
+<ul>
+  <li *ngFor="let recipeIngredient of recipe.recipeIngredients" class="ingredient">
+    <!--    <input type="text">-->
+    {{getIngredientName(recipeIngredient)}} - {{recipeIngredient.amount}} {{getMeasuringUnit(recipeIngredient)}}
+  </li>
+</ul>
+<ol>
+  <li *ngFor="let step of recipe.steps" class="step">
+    <span class="step-text">{{step.text}}</span>
+  </li>
+</ol>
+
+<form [formGroup]="formGroup" (ngSubmit)="onSubmit(formGroup)">
+  <label>
+    Name:
+    <input type="text" formControlName="name">
+  </label>
+
+  Ingredients:
+  <ul [formArrayName]="'recipeIngredients'">
+    <ng-container *ngFor="let recipeIngredient of recipeIngredientsFormArray.controls; let i = index">
+      <li [formGroupName]="i">
+        <label>
+          Zutat:
+          <input type="text" formControlName="ingredientName">
+        </label>
+        <label>
+          Menge:
+          <input type="number" formControlName="ingredientAmount" class="input-amount">
+        </label>
+        <label>
+          Einheit:
+          <input type="text" formControlName="ingredientUnit" class="input-unit">
+        </label>
+        <button type="button" (click)="removeRecipeIngredient(i)">X</button>
+      </li>
+    </ng-container>
+    <button type="button" (click)="addRecipeIngredient(undefined)">Zutat hinzufügen</button>
+  </ul>
+
+  <p>
+    <button type="submit">Speichern</button>
+  </p>
+</form>
+
+<a class="return-btn" routerLink="../..">Zurück</a>
