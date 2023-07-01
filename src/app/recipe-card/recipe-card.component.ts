@@ -13,7 +13,7 @@ export class RecipeCardComponent {
   recipe: Recipe;
 
   constructor(
-    private _apiService: IApiService,
+    protected _apiService: IApiService,
     private _route: ActivatedRoute
   ) {
     const recipeId = _route.snapshot.paramMap.get('id')!;

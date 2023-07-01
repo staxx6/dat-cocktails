@@ -21,4 +21,5 @@ export abstract class IApiService {
     abstract getRecipes(filter: RecipeFilter): Recipe[];
     abstract getAllRecipes(): Recipe[];
     abstract getIngredients(filter: IngredientFilter): Ingredient[];
+    abstract getAllIngredients(): Ingredient[];
 }

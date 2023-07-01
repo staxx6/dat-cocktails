@@ -109,4 +109,8 @@ export class ApiService implements IApiService {
 
     return newIngredientArr;
   }
+
+  getAllIngredients(): Ingredient[] {
+    return this._ingredients;
+  }
 }

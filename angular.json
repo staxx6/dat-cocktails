@@ -19,7 +19,7 @@
       },
       "root": "",
       "sourceRoot": "src",
-      "prefix": "app",
+      "prefix": "dc",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
@@ -90,7 +90,9 @@
           "builder": "@angular-builders/jest:run",
           "options": {
             "tsConfig": "tsconfig.spec.json",
-            "exclude": [ "./e2e"],
+            "exclude": [
+              "./e2e"
+            ],
             "polyfills": [
               "zone.js",
               "zone.js/testing"

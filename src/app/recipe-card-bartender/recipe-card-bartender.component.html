@@ -21,10 +21,14 @@ Aktiv? {{recipe.active ? "✔" : "❌"}}
   Ingredients:
   <ul [formArrayName]="'recipeIngredients'">
     <ng-container *ngFor="let recipeIngredient of recipeIngredientsFormArray.controls; let i = index">
-      <li [formGroupName]="i">
+      <li [formGroupName]="i" class="list-item">
         <label>
           Zutat:
-          <input type="text" formControlName="ingredientName">
+          <select formControlName="ingredientId">
+            <ng-container *ngFor="let ingredient of getAllIngredients()">
+              <option [value]="ingredient.id">{{ingredient.name}}</option>
+            </ng-container>
+          </select>
         </label>
         <label>
           Menge:
@@ -32,16 +36,20 @@ Aktiv? {{recipe.active ? "✔" : "❌"}}
         </label>
         <label>
           Einheit:
-          <input type="text" formControlName="ingredientUnit" class="input-unit">
+          <select formControlName="ingredientUnit">
+            <ng-container *ngFor="let ingredientUnit of Object.keys(MeasuringUnit)">
+              <option [value]="ingredientUnit">{{getMeasuringUnitDisplayName(ingredientUnit)}}</option>
+            </ng-container>
+          </select>
         </label>
-        <button type="button" (click)="removeRecipeIngredient(i)">X</button>
+        <button type="button" (click)="removeRecipeIngredient(i)" class="list-item-remove">X</button>
       </li>
     </ng-container>
-    <button type="button" (click)="addRecipeIngredient(undefined)">Zutat hinzufügen</button>
+    <button type="button" (click)="addRecipeIngredient()" class="add-ingredient">Zutat hinzufügen</button>
   </ul>
 
   <p>
-    <button type="submit">Speichern</button>
+    <button type="submit" class="save-list">Speichern</button>
   </p>
 </form>
 
