@@ -1,0 +1,22 @@
+:host {
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-items: center;
+}
+
+.header-logo {
+  margin: 0.5em;
+}
+
+.header-nav {
+  display: flex;
+  height: 100%;
+  align-self: center;
+  align-content: center;
+  justify-items: center;
+}
+
+.header-nav-item {
+  margin: 0 1em;
+}
