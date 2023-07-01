@@ -2,6 +2,7 @@
   {
     "id": 1,
     "name": "Caipirinha - Batida De Limao",
+    "active": true,
     "recipeIngredients": [
       {
         "ingredientId": 1,
@@ -33,6 +34,7 @@
   {
     "id": 2,
     "name": "Whisky Sour",
+    "active": false,
     "recipeIngredients": [
       {
         "ingredientId": 5,
@@ -84,6 +86,765 @@
       {
         "orderNumber": 6,
         "text": "Abseihen ins Glas."
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "Lynchburg Lemonade",
+    "active": true,
+    "recipeIngredients": [
+      {
+        "ingredientId": 9,
+        "measuringUnit": "oz",
+        "amount": 0.5
+      },
+      {
+        "ingredientId": 5,
+        "measuringUnit": "oz",
+        "amount": 0.5
+      },
+      {
+        "ingredientId": 20,
+        "measuringUnit": "oz",
+        "amount": 1.5
+      },
+      {
+        "ingredientId": 27,
+        "measuringUnit": "oz",
+        "amount": 0.75
+      },
+      {
+        "ingredientId": 28,
+        "measuringUnit": "oz",
+        "amount": 3
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "Glas mit Eis befüllen."
+      },
+      {
+        "orderNumber": 2,
+        "text": "(???) Zitronensaft, Bourbon und Orangenlikör hinzufügen."
+      },
+      {
+        "orderNumber": 3,
+        "text": "Sprite hinzufügen."
+      },
+      {
+        "orderNumber": 4,
+        "text": "Alles zusammenrühren."
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "Smoked Pineapple",
+    "active": true,
+    "recipeIngredients": [
+      {
+        "ingredientId": 9,
+        "measuringUnit": "oz",
+        "amount": 0.75
+      },
+      {
+        "ingredientId": 11,
+        "measuringUnit": "oz",
+        "amount": 0.75
+      },
+      {
+        "ingredientId": 4,
+        "measuringUnit": "oz",
+        "amount": 0.75
+      },
+      {
+        "ingredientId": 29,
+        "measuringUnit": "none",
+        "amount": 1
+      },
+      {
+        "ingredientId": 13,
+        "measuringUnit": "oz",
+        "amount": 1.5
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "Direkt ins Glas geben."
+      },
+      {
+        "orderNumber": 2,
+        "text": "Zuerst Lemon, Ananas und Zuckersirup mit Minze zerdrücken."
+      },
+      {
+        "orderNumber": 3,
+        "text": "Eis hinzufügen."
+      },
+      {
+        "orderNumber": 4,
+        "text": "Zum Schluss mischen."
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "Reverse Manhattan",
+    "active": true,
+    "recipeIngredients": [
+      {
+        "ingredientId": 24,
+        "measuringUnit": "cl",
+        "amount": 4
+      },
+      {
+        "ingredientId": 30,
+        "measuringUnit": "cl",
+        "amount": 2
+      },
+      {
+        "ingredientId": 31,
+        "measuringUnit": "cl",
+        "amount": 6
+      },
+      {
+        "ingredientId": 8,
+        "measuringUnit": "dash",
+        "amount": 2
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "Direkt im Glas zubereiten."
+      },
+      {
+        "orderNumber": 2,
+        "text": "Mit Eis rühren."
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "Malibu Sea Breeze",
+    "active": true,
+    "recipeIngredients": [
+      {
+        "ingredientId": 32,
+        "measuringUnit": "oz",
+        "amount": 1.5
+      },
+      {
+        "ingredientId": 11,
+        "measuringUnit": "oz",
+        "amount": 2
+      },
+      {
+        "ingredientId": 33,
+        "measuringUnit": "oz",
+        "amount": 2
+      },
+      {
+        "ingredientId": 9,
+        "measuringUnit": "oz",
+        "amount": 0.25
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "Alles im Shaker mixen."
+      },
+      {
+        "orderNumber": 2,
+        "text": "Glas mit Crushed Ice befüllen."
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "Cape Codder",
+    "active": true,
+    "recipeIngredients": [
+      {
+        "ingredientId": 13,
+        "measuringUnit": "oz",
+        "amount": 2
+      },
+      {
+        "ingredientId": 33,
+        "measuringUnit": "oz",
+        "amount": 2.5
+      },
+      {
+        "ingredientId": 9,
+        "measuringUnit": "oz",
+        "amount": 0.25
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "Alles im Glas rühren."
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "name": "Cosmopolitan",
+    "active": true,
+    "recipeIngredients": [
+      {
+        "ingredientId": 13,
+        "measuringUnit": "oz",
+        "amount": 1.5
+      },
+      {
+        "ingredientId": 34,
+        "measuringUnit": "oz",
+        "amount": 0.75
+      },
+      {
+        "ingredientId": 33,
+        "measuringUnit": "oz",
+        "amount": 1.5
+      },
+      {
+        "ingredientId": 9,
+        "measuringUnit": "oz",
+        "amount": 0.25
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "20 Sekunden im Shaker shaken."
+      },
+      {
+        "orderNumber": 2,
+        "text": "Double Strain (doppelt abseihen)."
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "name": "Piña Colada",
+    "active": false,
+    "recipeIngredients": [
+      {
+        "ingredientId": 32,
+        "measuringUnit": "oz",
+        "amount": 2
+      },
+      {
+        "ingredientId": 35,
+        "measuringUnit": "oz",
+        "amount": 1
+      },
+      {
+        "ingredientId": 11,
+        "measuringUnit": "oz",
+        "amount": 3
+      }
+    ],
+    "steps": []
+  },
+  {
+    "id": 10,
+    "name": "Swimming Pool",
+    "active": true,
+    "recipeIngredients": [
+      {
+        "ingredientId": 13,
+        "measuringUnit": "oz",
+        "amount": 0.75
+      },
+      {
+        "ingredientId": 36,
+        "measuringUnit": "oz",
+        "amount": 0.75
+      },
+      {
+        "ingredientId": 11,
+        "measuringUnit": "oz",
+        "amount": 2
+      },
+      {
+        "ingredientId": 37,
+        "measuringUnit": "oz",
+        "amount": 0.75
+      },
+      {
+        "ingredientId": 38,
+        "measuringUnit": "oz",
+        "amount": 0.75
+      },
+      {
+        "ingredientId": 39,
+        "measuringUnit": "oz",
+        "amount": 0.5
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "Alle Zutaten außer Blue Curacao in den Shaker mit Eis geben."
+      },
+      {
+        "orderNumber": 2,
+        "text": "Ins Glas mit Crushed Ice geben."
+      },
+      {
+        "orderNumber": 3,
+        "text": "Blue Curacao darüber gießen."
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "name": "Fidel Castro",
+    "active": true,
+    "recipeIngredients": [
+      {
+        "ingredientId": 40,
+        "measuringUnit": "oz",
+        "amount": 0.5
+      },
+      {
+        "ingredientId": 41,
+        "measuringUnit": "oz",
+        "amount": 5
+      },
+      {
+        "ingredientId": 9,
+        "measuringUnit": "oz",
+        "amount": 0.33
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "Im Glas zubereiten."
+      },
+      {
+        "orderNumber": 2,
+        "text": "Eis hinzufügen."
+      },
+      {
+        "orderNumber": 3,
+        "text": "Rühren."
+      }
+    ]
+  },
+  {
+    "id": 12,
+    "name": "Basequite",
+    "active": true,
+    "recipeIngredients": [
+      {
+        "ingredientId": 13,
+        "measuringUnit": "cl",
+        "amount": 6
+      },
+      {
+        "ingredientId": 9,
+        "measuringUnit": "cl",
+        "amount": 3
+      },
+      {
+        "ingredientId": 4,
+        "measuringUnit": "cl",
+        "amount": 2
+      },
+      {
+        "ingredientId": 8,
+        "measuringUnit": "dash",
+        "amount": 5
+      },
+      {
+        "ingredientId": 16,
+        "measuringUnit": "cl",
+        "amount": 3
+      },
+      {
+        "ingredientId": 12,
+        "measuringUnit": "none",
+        "amount": 5
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "Glasrand mit den Basilikumblättern einreiben."
+      },
+      {
+        "orderNumber": 2,
+        "text": "Eis dazugeben."
+      },
+      {
+        "orderNumber": 3,
+        "text": "Alle Zutaten bis auf Soda ins Glas geben und rühren."
+      },
+      {
+        "orderNumber": 4,
+        "text": "Mit Soda auffüllen."
+      }
+    ]
+  },
+  {
+    "id": 13,
+    "name": "Basil and Pineapple Martini",
+    "active": true,
+    "recipeIngredients": [
+      {
+        "ingredientId": 11,
+        "measuringUnit": "oz",
+        "amount": 1
+      },
+      {
+        "ingredientId": 12,
+        "measuringUnit": "none",
+        "amount": 3
+      },
+      {
+        "ingredientId": 4,
+        "measuringUnit": "oz",
+        "amount": 0.75
+      },
+      {
+        "ingredientId": 13,
+        "measuringUnit": "oz",
+        "amount": 2
+      },
+      {
+        "ingredientId": 5,
+        "measuringUnit": "oz",
+        "amount": 1
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "Zuerst Basilikumblätter mit Vodka zerstoßen."
+      },
+      {
+        "orderNumber": 2,
+        "text": "Dann den Rest der Zutaten mit Eis shaken."
+      }
+    ]
+  },
+  {
+    "id": 14,
+    "name": "Mojito",
+    "active": true,
+    "recipeIngredients": [
+      {
+        "ingredientId": 14,
+        "measuringUnit": "cl",
+        "amount": 5
+      },
+      {
+        "ingredientId": 15,
+        "measuringUnit": "none",
+        "amount": 4
+      },
+      {
+        "ingredientId": 4,
+        "measuringUnit": "cl",
+        "amount": 2
+      },
+      {
+        "ingredientId": 9,
+        "measuringUnit": "cl",
+        "amount": 2
+      },
+      {
+        "ingredientId": 16,
+        "measuringUnit": "cl",
+        "amount": 4
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "Minze zwischen beiden Handseiten anklatschen."
+      },
+      {
+        "orderNumber": 2,
+        "text": "Alles mit Eis ins Glas geben und rühren."
+      }
+    ]
+  },
+  {
+    "id": 15,
+    "name": "Mojito, Raspberry",
+    "active": true,
+    "recipeIngredients": [
+      {
+        "ingredientId": 14,
+        "measuringUnit": "cl",
+        "amount": 5
+      },
+      {
+        "ingredientId": 9,
+        "measuringUnit": "cl",
+        "amount": 2.5
+      },
+      {
+        "ingredientId": 4,
+        "measuringUnit": "cl",
+        "amount": 2
+      },
+      {
+        "ingredientId": 15,
+        "measuringUnit": "none",
+        "amount": 4
+      },
+      {
+        "ingredientId": 17,
+        "measuringUnit": "none",
+        "amount": 6
+      },
+      {
+        "ingredientId": 18,
+        "measuringUnit": "cl",
+        "amount": 4
+      },
+      {
+        "ingredientId": 16,
+        "measuringUnit": "none",
+        "amount": 1
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "Bei frischen Himbeeren im Glas zerstoßen."
+      },
+      {
+        "orderNumber": 2,
+        "text": "Minze zwischen beiden Händen anklatschen."
+      },
+      {
+        "orderNumber": 3,
+        "text": "Bis auf Soda mit Eis rühren."
+      },
+      {
+        "orderNumber": 4,
+        "text": "Rühren, bis das Glas beschlagen ist."
+      },
+      {
+        "orderNumber": 5,
+        "text": "Mit Soda auffüllen."
+      }
+    ]
+  },
+  {
+    "id": 16,
+    "name": "Pisco Punch",
+    "active": true,
+    "recipeIngredients": [
+      {
+        "ingredientId": 10,
+        "measuringUnit": "cl",
+        "amount": 6
+      },
+      {
+        "ingredientId": 5,
+        "measuringUnit": "cl",
+        "amount": 3
+      },
+      {
+        "ingredientId": 4,
+        "measuringUnit": "cl",
+        "amount": 2
+      },
+      {
+        "ingredientId": 19,
+        "measuringUnit": "none",
+        "amount": 4
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "Ananaswürfel zerstoßen im Shaker."
+      },
+      {
+        "orderNumber": 2,
+        "text": "Den Rest mit Eis shaken."
+      },
+      {
+        "orderNumber": 3,
+        "text": "Doppelt abseihen."
+      }
+    ]
+  },
+  {
+    "id": 17,
+    "name": "Bourbon Cocktail",
+    "active": true,
+    "recipeIngredients": [
+      {
+        "ingredientId": 20,
+        "measuringUnit": "cl",
+        "amount": 6
+      },
+      {
+        "ingredientId": 5,
+        "measuringUnit": "cl",
+        "amount": 1.5
+      },
+      {
+        "ingredientId": 21,
+        "measuringUnit": "cl",
+        "amount": 1
+      },
+      {
+        "ingredientId": 22,
+        "measuringUnit": "cl",
+        "amount": 1
+      },
+      {
+        "ingredientId": 23,
+        "measuringUnit": "dash",
+        "amount": 1
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "Alles mit Eis shaken."
+      },
+      {
+        "orderNumber": 2,
+        "text": "Ins Glas abseihen ohne Eis."
+      }
+    ]
+  },
+  {
+    "id": 18,
+    "name": "Daiquiri El Floridita",
+    "active": false,
+    "recipeIngredients": [
+      {
+        "ingredientId": 14,
+        "measuringUnit": "cl",
+        "amount": 6
+      },
+      {
+        "ingredientId": 9,
+        "measuringUnit": "cl",
+        "amount": 2
+      },
+      {
+        "ingredientId": 25,
+        "measuringUnit": "cl",
+        "amount": 1
+      },
+      {
+        "ingredientId": 4,
+        "measuringUnit": "cl",
+        "amount": 1
+      },
+      {
+        "ingredientId": 26,
+        "measuringUnit": "cl",
+        "amount": 3
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "Alles im Shaker mit Eis shaken."
+      },
+      {
+        "orderNumber": 2,
+        "text": "Ins Glas ohne Eis abseihen."
+      }
+    ]
+  },
+  {
+    "id": 19,
+    "name": "Pisco Sour",
+    "active": true,
+    "recipeIngredients": [
+      {
+        "ingredientId": 10,
+        "measuringUnit": "cl",
+        "amount": 6
+      },
+      {
+        "ingredientId": 9,
+        "measuringUnit": "cl",
+        "amount": 3
+      },
+      {
+        "ingredientId": 4,
+        "measuringUnit": "cl",
+        "amount": 2
+      },
+      {
+        "ingredientId": 7,
+        "measuringUnit": "gtl",
+        "amount": 1
+      },
+      {
+        "ingredientId": 23,
+        "measuringUnit": "dash",
+        "amount": 3
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "Bis auf Angostura alles im Shaker shaken."
+      },
+      {
+        "orderNumber": 2,
+        "text": "Shaken für 30 Sekunden."
+      },
+      {
+        "orderNumber": 3,
+        "text": "Ins Glas absiehen ohne Eis."
+      },
+      {
+        "orderNumber": 4,
+        "text": "Bitter darauf geben."
+      }
+    ]
+  },
+  {
+    "id": 20,
+    "name": "Manhattan",
+    "active": true,
+    "recipeIngredients": [
+      {
+        "ingredientId": 20,
+        "measuringUnit": "cl",
+        "amount": 3
+      },
+      {
+        "ingredientId": 24,
+        "measuringUnit": "cl",
+        "amount": 3
+      },
+      {
+        "ingredientId": 23,
+        "measuringUnit": "dash",
+        "amount": 2
+      }
+    ],
+    "steps": [
+      {
+        "orderNumber": 1,
+        "text": "Alles im Rührglas mit Eis rühren."
+      },
+      {
+        "orderNumber": 2,
+        "text": "Ins Glas ohne Eis abseihen."
       }
     ]
   }

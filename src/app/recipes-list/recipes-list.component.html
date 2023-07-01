@@ -1,11 +1,15 @@
 <h2>Cocktails:</h2>
 <ul class="cocktails-list">
-  <li *ngFor="let recipe of recipes">
-    <recipe-list-item
-      [recipe]="recipe"
-      [isBartenderUser]="isBartenderUser"
-    >
-    </recipe-list-item>
-  </li>
+  <ng-container *ngFor="let recipe of recipes">
+    <ng-container *ngIf="isBartenderUser ? true : recipe.active">
+      <li>
+        <recipe-list-item
+          [recipe]="recipe"
+          [isBartenderUser]="isBartenderUser"
+        >
+        </recipe-list-item>
+      </li>
+    </ng-container>
+  </ng-container>
   <li *ngIf="!recipes.length">No cocktails available.</li>
 </ul>

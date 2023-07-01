@@ -13,7 +13,7 @@
   },
   {
     "id": 4,
-    "name": "Zuckerssirup"
+    "name": "Zuckersirup"
   },
   {
     "id": 5,
@@ -30,5 +30,137 @@
   {
     "id": 8,
     "name": "Orange Bitter"
+  },
+  {
+    "id": 9,
+    "name": "Limettensaft"
+  },
+  {
+    "id": 10,
+    "name": "Pisco"
+  },
+  {
+    "id": 11,
+    "name": "Ananassaft"
+  },
+  {
+    "id": 12,
+    "name": "Basilikumblätter"
+  },
+  {
+    "id": 13,
+    "name": "Vodka"
+  },
+  {
+    "id": 14,
+    "name": "Weißer Rum"
+  },
+  {
+    "id": 15,
+    "name": "Minzzweige"
+  },
+  {
+    "id": 16,
+    "name": "Soda"
+  },
+  {
+    "id": 17,
+    "name": "Himbeeren"
+  },
+  {
+    "id": 18,
+    "name": "Himbeerpüree"
+  },
+  {
+    "id": 19,
+    "name": "Ananaswürfel"
+  },
+  {
+    "id": 20,
+    "name": "Bourbon Whisky"
+  },
+  {
+    "id": 21,
+    "name": "Benedictine"
+  },
+  {
+    "id": 22,
+    "name": "Orange Curacao"
+  },
+  {
+    "id": 23,
+    "name": "Angostura"
+  },
+  {
+    "id": 24,
+    "name": "Roter Wermut"
+  },
+  {
+    "id": 25,
+    "name": "Maraschino"
+  },
+  {
+    "id": 26,
+    "name": "Pink Grapefruit"
+  },
+  {
+    "id": 27,
+    "name": "Orangenlikör"
+  },
+  {
+    "id": 28,
+    "name": "Sprite"
+  },
+  {
+    "id": 29,
+    "name": "Minze"
+  },
+  {
+    "id": 30,
+    "name": "Bourbon - Rye"
+  },
+  {
+    "id": 31,
+    "name": "Tonic Water"
+  },
+  {
+    "id": 32,
+    "name": "Malibu"
+  },
+  {
+    "id": 33,
+    "name": "Cranberry"
+  },
+  {
+    "id": 34,
+    "name": "Cointreau"
+  },
+  {
+    "id": 35,
+    "name": "Coconut Cream"
+  },
+  {
+    "id": 36,
+    "name": "Light Rum"
+  },
+  {
+    "id": 37,
+    "name": "Heavy Cream"
+  },
+  {
+    "id": 38,
+    "name": "Kokosnusscreme"
+  },
+  {
+    "id": 39,
+    "name": "Blue Curacao"
+  },
+  {
+    "id": 40,
+    "name": "Kubanischer Rum"
+  },
+  {
+    "id": 41,
+    "name": "Ginger Ale"
   }
 ]

@@ -50,6 +50,7 @@ export class ApiService implements IApiService {
       const newRecipe = {} as Recipe;
       newRecipe.id = recipe.id;
       newRecipe.name = recipe.name;
+      newRecipe.active = recipe.active;
       newRecipe.recipeIngredients = [];
       recipe.recipeIngredients.forEach(recipeIngredient => {
         const newRecipeIngredient = {} as RecipeIngredient;

@@ -1,4 +1,5 @@
 <h2>{{recipe.name}}</h2>
+Aktiv? {{recipe.active ? "✔" : "❌"}}
 <ul>
   <li *ngFor="let recipeIngredient of recipe.recipeIngredients" class="ingredient">
     <!--    <input type="text">-->

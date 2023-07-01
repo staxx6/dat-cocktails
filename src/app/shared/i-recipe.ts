@@ -22,6 +22,7 @@ export interface RecipeStep {
 export interface Recipe {
     id: number,
     name: string,
+    active: boolean,
     picture?: string,
     recipeIngredients: RecipeIngredient[],
     garnishes?: Ingredient[],
