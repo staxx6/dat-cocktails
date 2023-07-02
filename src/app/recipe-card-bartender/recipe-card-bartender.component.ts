@@ -4,26 +4,19 @@ import { IApiService } from "../services/i-api-service";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { RecipeCardComponent } from "../recipe-card/recipe-card.component";
 import { MeasuringUnit, RecipeIngredient } from "../shared/i-recipe";
-import { FormArray, FormBuilder, FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { Ingredient } from "../shared/i-ingredient";
 
-export interface RecipeIngredientModel extends FormGroup<{
-  ingredientId: FormControl<number>,
-  ingredientAmount: FormControl<number>,
-  ingredientUnit: FormControl<MeasuringUnit>
-}> {
-}
-
-export interface RecipeIngredientModel2 {
+export interface IRecipeIngredientsFormModel {
   ingredientId: FormControl<number>,
   ingredientAmount: FormControl<number>,
   ingredientUnit: FormControl<MeasuringUnit>
 }
 
-// export interface RecipeFormModel extends FormGroup<{
-//   name: FormControl<string>;
-//   recipeIngredients: FormArray<RecipeIngredientModel>;
-// }> {}
+export interface IFormGroupModel {
+  name: FormControl<string>,
+  recipeIngredients: FormArray<FormGroup<IRecipeIngredientsFormModel>>
+}
 
 @Component({
   selector: 'recipe-card-bartender',
@@ -39,73 +32,69 @@ export interface RecipeIngredientModel2 {
 })
 export class RecipeCardBartenderComponent extends RecipeCardComponent implements OnInit {
 
+  // recipeIngredientsFormArray: FormArray<FormGroup<{
+  //   ingredientId: FormControl<number>,
+  //   ingredientAmount: FormControl<number>,
+  //   ingredientUnit: FormControl<MeasuringUnit>
+  // }>>;
 
-  recipeIngredientsFormArray = this._formBuilder.array([this._formBuilder.group({
-    ingredientId: FormControl<number>,
-    ingredientAmount: FormControl<number>,
-    ingredientUnit: FormControl<MeasuringUnit>
-  })]);
+  // recipeIngredientsFormArray = new FormArray<FormGroup<{
+  //   ingredientId: FormControl<number>,
+  //   ingredientAmount: FormControl<number>,
+  //   ingredientUnit: FormControl<MeasuringUnit>
+  // }>>([]);
+
   recipeIngredients: RecipeIngredient[];
 
+  // formGroup: FormGroup<IFormGroupModel>;
+
+  // formGroup = new FormGroup<{
+  //   name: FormControl<string>,
+  //   recipeIngredients: FormControl<>
+  // }>({});
+
+  // formGroup = this._formBuilder.group({
+  //   name: FormControl<string>,
+  //   recipeIngredients: this.recipeIngredientsFormArray
+  // })
+
   formGroup = this._formBuilder.group({
-    name: FormControl<string>,
-    recipeIngredients: this.recipeIngredientsFormArray
+    name: '',
+    recipeIngredients: this._formBuilder.array([
+      this._formBuilder.group({
+        ingredientId: -1,
+        ingredientAmount: -1,
+        ingredientUnit: MeasuringUnit.none
+      })
+    ])
   })
 
   constructor(
     apiService: IApiService,
     route: ActivatedRoute,
-    private _formBuilder: FormBuilder
+    private _formBuilder: NonNullableFormBuilder
   ) {
     super(
       apiService,
       route
     );
 
-    // this.recipeIngredientsFormArray = this._formBuilder.group({
-    //   ingredientId: new FormControl<number>(-1, {nonNullable: true}),
-    //   ingredientAmount: new FormControl<number>(-1, {nonNullable: true}),
-    //   ingredientUnit: new FormControl<MeasuringUnit>(MeasuringUnit.none, {nonNullable: true})
+    this.formGroup.controls.name.setValue(this.recipe.name);
+
+    // this.formGroup = new FormGroup(<IFormGroupModel>{
+    //   name: new FormControl(this.recipe.name, {nonNullable: true}),
+    //   recipeIngredients: new FormArray([])
     // })
-    // new FormArray([] as FormControl[]);
-
-    // this.formGroup = new FormGroup({
-    //   name: new FormControl<string>(this.recipe.name),
-    //   recipeIngredients: this.recipeIngredientsFormArray
-    // });
-
-    // this.formGroup = this._formBuilder.group({
-    //   name: this.recipe.name,
-    //   //
-    //   recipeIngredients: new FormArray<FormGroup<RecipeIngredientModel>>([])
-    // })
-
-    // this.recipeIngredientsFormArray = this._formBuilder.array<RecipeIngredientModel>([]);
-
-    // this.recipeIngredientsFormArray = this._formBuilder.array([this._formBuilder.group({
-    //   ingredientId: -1,
-    //   ingredientAmount: 0,
-    //   ingredientUnit: MeasuringUnit.none
-    // })])
-
-    // this.recipeIngredientsFormArray = this._formBuilder.array(this._formBuilder.group({
-    //   ingredientId: FormControl<number>,
-    //   ingredientAmount: FormControl<number>,
-    //   ingredientUnit: FormControl<MeasuringUnit>
-    // }));
-
-    // this.formGroup = this._formBuilder.group({
-    //   name: this.recipe.name,
-    //   recipeIngredients: this.recipeIngredientsFormArray
-    // })
-
-    this.formGroup.controls.name ;
+    // this.formGroup.controls.name;
 
     this.recipeIngredients = this.recipe.recipeIngredients;
     this.createRecipeIngredientControls();
   }
 
   private createRecipeIngredientControls(): void {
+    if (this.recipeIngredients.length !== 0) {
+      this.formGroup.controls.recipeIngredients.removeAt(0);
+    }
     this.recipeIngredients.forEach(recipeIngredient => {
       this.addRecipeIngredient(recipeIngredient);
     })
@@ -117,29 +106,43 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
         ingredientId: -1,
         amount: 1,
         measuringUnit: MeasuringUnit.none
-      } as RecipeIngredient
+      }
     }
-    this.recipeIngredientsFormArray.push(this._formBuilder.group({
-      ingredientId: recipeIngredient.ingredientId,
-      ingredientAmount: recipeIngredient.amount,
-      ingredientUnit: recipeIngredient.measuringUnit
-    }));
-    // this.recipeIngredientsFormArray.push(new FormGroup({
-    //   ingredientId: new FormControl(recipeIngredient.ingredientId),
-    //   ingredientAmount: new FormControl(recipeIngredient.amount),
-    //   ingredientUnit: new FormControl(recipeIngredient.measuringUnit),
-    // }));
+
+    this.formGroup.controls.recipeIngredients.push(
+      this._formBuilder.group({
+        ingredientId: recipeIngredient.ingredientId,
+        ingredientAmount: recipeIngredient.amount,
+        ingredientUnit: recipeIngredient.measuringUnit
+      })
+    );
   }
 
   ngOnInit() {
   }
 
-  onSubmit(form: FormGroup): void {
-    this.recipe.name = form.value.name;
-    this.recipeIngredientsFormArray.controls.forEach(ctrl => {
-      // console.log(ctrl.get('ingredientId')?.value);
-      console.log(ctrl.value.ingredientId);
+  /**
+   * Saves currently only in memory
+   */
+  onSubmit(): void {
+    const formCtrls = this.formGroup.controls;
+
+    this.recipe.name = formCtrls.name.value;
+
+    const currRecipeIngredientsSize = this.recipe.recipeIngredients.length;
+
+    this.formGroup.controls.recipeIngredients.value.forEach(recipeIngredientCtrls => {
+      const newId = typeof recipeIngredientCtrls.ingredientId === 'string' ? parseInt(recipeIngredientCtrls.ingredientId) : recipeIngredientCtrls.ingredientId;
+      const newRecipeIngredient: RecipeIngredient = {
+        ingredientId: newId ?? -1,
+        amount: recipeIngredientCtrls.ingredientAmount ?? -1,
+        measuringUnit: recipeIngredientCtrls.ingredientUnit ?? MeasuringUnit.none
+      }
+      this.recipe.recipeIngredients.push(newRecipeIngredient);
     })
+    // First, add all new recipeIngredients
+    // After that remove the old one, maybe it's safer this way
+    this.recipe.recipeIngredients.splice(0, currRecipeIngredientsSize);
   }
 
   private saveRecipe(): void {
@@ -148,7 +151,8 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
 
   removeRecipeIngredient(index: number): void {
     // this.recipe.recipeIngredients.splice(index);
-    this.recipeIngredientsFormArray.removeAt(index);
+    this.formGroup.controls.recipeIngredients.removeAt(index);
+    // this.recipeIngredientsFormArray.removeAt(index);
   }
 
   getMeasuringUnit(recipeIngredient: RecipeIngredient): string {

@@ -12,7 +12,7 @@ Aktiv? {{recipe.active ? "✔" : "❌"}}
   </li>
 </ol>
 
-<form [formGroup]="formGroup" (ngSubmit)="onSubmit(formGroup)">
+<form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
   <label>
     Name:
     <input type="text" formControlName="name">
@@ -20,7 +20,7 @@ Aktiv? {{recipe.active ? "✔" : "❌"}}
 
   Ingredients:
   <ul [formArrayName]="'recipeIngredients'">
-    <ng-container *ngFor="let recipeIngredient of recipeIngredientsFormArray.controls; let i = index">
+    <ng-container *ngFor="let recipeIngredient of formGroup.controls.recipeIngredients.controls; let i = index">
       <li [formGroupName]="i" class="list-item">
         <label>
           Zutat:
