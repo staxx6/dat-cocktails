@@ -6,13 +6,14 @@
   "scripts": {
     "start": "node dist/server.js",
     "watch-ts": "npx tsc --watch",
-    "watch-node": "nodemon -q dist/server.js",
+    "watch-node": "nodemon -q dist/server.js --experimental-specifier-resolution=node",
     "dev": "concurrently 'npm:watch-*'"
   },
   "type": "module",
-  "author": "",
+  "author": "staxx6",
   "license": "ISC",
   "dependencies": {
+    "dat-cocktails-types": "file:../shared",
     "express": "^4.18.2",
     "mongodb": "5.6"
   },

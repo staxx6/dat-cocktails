@@ -1,36 +1,18 @@
 import express, {Application, Request, Response} from 'express';
-import {MongoClient} from "mongodb";
-// import {MongoClient, MongoClientOptions} from 'mongodb';
+import { MongoDbConnectionService } from './services/mongo-db-connection.service.js';
+import { IDbConnection } from 'dat-cocktails-types';
 
 const app = express();
 const port = 8000;
 
 // Mongodb
-const mongoUrl = 'mongodb://localhost:27017/';
-const mongoClient = new MongoClient(mongoUrl);
-
-try {
-    await mongoClient.connect();
-} catch (e) {
-    console.error(e);
-}
-
-const mongoDbName = 'dat-cocktails';
-const database = mongoClient.db(mongoDbName);
-const ingredientsCollectionName = 'ingredients';
-const ingredientsCollection = database.collection(ingredientsCollectionName);
+const dbConnection: IDbConnection = new MongoDbConnectionService();
+await dbConnection.connect();
 
 // Test get all ingredients
 app.get('/', async (req: Request, res: Response) => {
-    const query = {};
-    const result = await ingredientsCollection.find(query);
     res.contentType('application/json');
-    const resOutArr = [];
-    for await (const doc of result) {
-        resOutArr.push(doc);
-    }
-    res.send(resOutArr);
-    // console.log(resOutArr);
+    res.send(await dbConnection.getAllIngredients());
 });
 
 app.listen(port, () => {
