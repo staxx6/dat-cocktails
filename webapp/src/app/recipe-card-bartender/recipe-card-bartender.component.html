@@ -25,8 +25,12 @@ Aktiv? {{recipe.active ? "✔" : "❌"}}
         <label>
           Zutat:
           <select formControlName="ingredientId">
-            <ng-container *ngFor="let ingredient of getAllIngredients()">
-              <option [value]="ingredient.id">{{ingredient.name}}</option>
+            <ng-container *ngIf="getAllIngredients$() | async as ingredients">
+              <option *ngFor="let ingredient of ingredients"
+                      [value]="ingredient.id"
+              >
+                {{ ingredient.name }}
+              </option>
             </ng-container>
           </select>
         </label>

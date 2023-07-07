@@ -1,0 +1,14 @@
+<ul class="list">
+  <ng-container *ngIf="(ingredients$ | async) as ingredients">
+    <ng-container *ngIf="isBartenderUser ? true : true"> <!-- ingredient.active -->
+      <li *ngFor="let ingredient of ingredients">
+        <dc-ingredients-list-item
+          [ingredient]="ingredient"
+          [isBartenderUser]="isBartenderUser"
+        >
+        </dc-ingredients-list-item>
+      </li>
+    </ng-container>
+    <li *ngIf="!ingredients.length">No cocktails available.</li>
+  </ng-container>
+</ul>

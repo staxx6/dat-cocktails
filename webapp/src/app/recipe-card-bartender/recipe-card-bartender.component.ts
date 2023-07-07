@@ -6,6 +6,7 @@ import { RecipeCardComponent } from "../recipe-card/recipe-card.component";
 import { MeasuringUnit, RecipeIngredient } from "../shared/i-recipe";
 import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { Ingredient } from "../shared/i-ingredient";
+import { Observable } from "rxjs";
 
 export interface IRecipeIngredientsFormModel {
   ingredientId: FormControl<number>,
@@ -32,31 +33,7 @@ export interface IFormGroupModel {
 })
 export class RecipeCardBartenderComponent extends RecipeCardComponent implements OnInit {
 
-  // recipeIngredientsFormArray: FormArray<FormGroup<{
-  //   ingredientId: FormControl<number>,
-  //   ingredientAmount: FormControl<number>,
-  //   ingredientUnit: FormControl<MeasuringUnit>
-  // }>>;
-
-  // recipeIngredientsFormArray = new FormArray<FormGroup<{
-  //   ingredientId: FormControl<number>,
-  //   ingredientAmount: FormControl<number>,
-  //   ingredientUnit: FormControl<MeasuringUnit>
-  // }>>([]);
-
   recipeIngredients: RecipeIngredient[];
-
-  // formGroup: FormGroup<IFormGroupModel>;
-
-  // formGroup = new FormGroup<{
-  //   name: FormControl<string>,
-  //   recipeIngredients: FormControl<>
-  // }>({});
-
-  // formGroup = this._formBuilder.group({
-  //   name: FormControl<string>,
-  //   recipeIngredients: this.recipeIngredientsFormArray
-  // })
 
   formGroup = this._formBuilder.group({
     name: '',
@@ -80,12 +57,6 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
     );
 
     this.formGroup.controls.name.setValue(this.recipe.name);
-
-    // this.formGroup = new FormGroup(<IFormGroupModel>{
-    //   name: new FormControl(this.recipe.name, {nonNullable: true}),
-    //   recipeIngredients: new FormArray([])
-    // })
-    // this.formGroup.controls.name;
 
     this.recipeIngredients = this.recipe.recipeIngredients;
     this.createRecipeIngredientControls();
@@ -163,8 +134,8 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
     return MeasuringUnit[unit as keyof typeof MeasuringUnit].toString();
   }
 
-  getAllIngredients(): Ingredient[] {
-    return this._apiService.getAllIngredients();
+  getAllIngredients$(): Observable<Ingredient[]> {
+    return this._apiService.getAllIngredients$();
   }
 
   protected readonly MeasuringUnit = MeasuringUnit;
