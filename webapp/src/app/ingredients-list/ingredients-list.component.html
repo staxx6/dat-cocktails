@@ -1,6 +1,6 @@
 <ul class="list">
   <ng-container *ngIf="(ingredients$ | async) as ingredients">
-    <ng-container *ngIf="isBartenderUser ? true : true"> <!-- ingredient.active -->
+    <ng-container *ngIf="isBartenderUser ? true : true"> <!-- ingredient.active ist auch noch falsche stelle! -->
       <li *ngFor="let ingredient of ingredients">
         <dc-ingredients-list-item
           [ingredient]="ingredient"

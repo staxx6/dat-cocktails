@@ -4,6 +4,7 @@ import { Recipe } from "../shared/i-recipe";
 import { IApiService } from "../services/i-api-service";
 import { RecipeListItemComponent } from "../recipe-list-item/recipe-list-item.component";
 import { Router } from "@angular/router";
+import { Observable } from "rxjs";
 
 @Component({
   selector: 'recipes-list',
@@ -14,14 +15,14 @@ import { Router } from "@angular/router";
 })
 export class RecipesListComponent {
 
-  recipes: Recipe[];
+  recipes$: Observable<Recipe[]>;
   isBartenderUser: boolean;
 
   constructor(
     private _apiService: IApiService,
     private _router: Router
   ) {
-    this.recipes = _apiService.getAllRecipes();
+    this.recipes$ = _apiService.getAllRecipes$();
     this.isBartenderUser = _router.url.includes('bartender');
   }
 }

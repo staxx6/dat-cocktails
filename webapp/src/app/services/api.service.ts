@@ -4,7 +4,7 @@ import { IApiService, IngredientFilter, RecipeFilter } from './i-api-service';
 import { MeasuringUnit, Recipe, RecipeIngredient } from '../shared/i-recipe';
 import { Ingredient } from '../shared/i-ingredient';
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, of } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -36,10 +36,8 @@ export class ApiService implements IApiService {
     return a;
   }
 
-  getAllRecipes(): Recipe[] {
-    // return this._recipes;
-    const a: Recipe[] = [];
-    return a;
+  getAllRecipes$(): Observable<Recipe[]> {
+    return this._http.get<Recipe[]>(this._baseUrl + '/allRecipes');
   }
 
   private loadRecipes(): Recipe[] {
@@ -77,9 +75,12 @@ export class ApiService implements IApiService {
     return a;
   }
 
-  public getIngredients(filter: IngredientFilter): Ingredient[] {
+  public getIngedients$(filter: IngredientFilter): Observable<Ingredient[]> {
+    const a: Ingredient[] = [];
+    return of(a);
 
     // return this._ingredients.filter(ingredient => {
+    //   return this._http.get<Ingredient[]>(this._baseUrl + '/allIngredients');
     //
     //   let matchTags = true;
     //   if (ingredient.tags && Array.isArray(ingredient.tags) && filter.tags && Array.isArray(filter.tags)) {
@@ -97,8 +98,6 @@ export class ApiService implements IApiService {
     //     && filter.name ? ingredient.name === filter.name : true
     //   && matchTags
     // })
-    const a: Ingredient[] = [];
-    return a;
   }
 
 

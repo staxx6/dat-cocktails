@@ -1,0 +1,16 @@
+{
+  "name": "dat-cocktails",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "watch-server": "cd ./server && npm run dev",
+    "watch-webapp": "cd ./webapp && npx ng serve",
+    "dev": "concurrently 'npm:watch-*'"
+  },
+  "author": "staxx6",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^8.2.0"
+  }
+}

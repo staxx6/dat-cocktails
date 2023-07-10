@@ -8,20 +8,33 @@ export class MongoDbConnectionService implements IDbConnection {
 
     private readonly _dbName = 'dat-cocktails';
     private readonly _ingredientsCollectionName = 'ingredients';
+    private readonly _recipesCollectionName = 'recipes';
 
     private _dataBase: Db | undefined;
+
     private getDb(): Db {
         if (!this._dataBase) {
             this._dataBase = this._client.db(this._dbName);
         }
         return this._dataBase;
     }
+
     private _ingredientsCollection: Collection<Ingredient> | undefined;
-    private getIngredientCollection(): Collection<Ingredient> {
+
+    private _getIngredientCollection(): Collection<Ingredient> {
         if (!this._ingredientsCollection) {
             this._ingredientsCollection = this.getDb().collection<Ingredient>(this._ingredientsCollectionName);
         }
         return this._ingredientsCollection;
+    }
+
+    private _recipesCollection: Collection<Recipe> | undefined;
+
+    private _getRecipesCollection(): Collection<Recipe> {
+        if (!this._recipesCollection) {
+            this._recipesCollection = this.getDb().collection<Recipe>(this._recipesCollectionName);
+        }
+        return this._recipesCollection;
     }
 
     constructor() {
@@ -45,17 +58,20 @@ export class MongoDbConnectionService implements IDbConnection {
     }
 
     async getAllIngredients(): Promise<Ingredient[]> {
-      const query = {};
-      const cursor = await this.getIngredientCollection().find(query);
-      return await cursor.toArray();
+        const query = {};
+        const cursor = await this._getIngredientCollection().find(query);
+        return await cursor.toArray();
     }
 
-    getAllRecipes(): Recipe[] {
-        return [];
+    async getAllRecipes(): Promise<Recipe[]> {
+        const query = {};
+        const cursor = await this._getRecipesCollection().find(query);
+        return await cursor.toArray();
     }
 
-    getIngredients(filter: IngredientFilter): Ingredient[] {
-        return [];
+    async getIngredients(filter: IngredientFilter): Promise<Ingredient[]> {
+        const cursor = await this._getIngredientCollection().find(filter);
+        return await cursor.toArray();
     }
 
 }

@@ -1,14 +1,16 @@
 <ul class="cocktails-list">
-  <ng-container *ngFor="let recipe of recipes">
-    <ng-container *ngIf="isBartenderUser ? true : recipe.active">
-      <li>
-        <recipe-list-item
-          [recipe]="recipe"
-          [isBartenderUser]="isBartenderUser"
-        >
-        </recipe-list-item>
-      </li>
+  <ng-container *ngIf="(recipes$ | async) as recipes">
+    <ng-container *ngFor="let recipe of recipes">
+      <ng-container *ngIf="isBartenderUser ? true : recipe.active">
+        <li>
+          <recipe-list-item
+            [recipe]="recipe"
+            [isBartenderUser]="isBartenderUser"
+          >
+          </recipe-list-item>
+        </li>
+      </ng-container>
     </ng-container>
+    <li *ngIf="!recipes.length">No cocktails available.</li>
   </ng-container>
-  <li *ngIf="!recipes.length">No cocktails available.</li>
 </ul>

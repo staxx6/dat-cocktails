@@ -16,7 +16,7 @@ export interface IngredientFilter extends IFilter {
 })
 export abstract class IApiService {
     abstract getRecipes(filter: RecipeFilter): Recipe[];
-    abstract getAllRecipes(): Recipe[];
-    abstract getIngredients(filter: IngredientFilter): Ingredient[];
+    abstract getAllRecipes$(): Observable<Recipe[]>;
+    abstract getIngredients$(filter: IngredientFilter): Observable<Ingredient[]>;
     abstract getAllIngredients$(): Observable<Ingredient[]>;
 }
