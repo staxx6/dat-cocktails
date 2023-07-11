@@ -5,7 +5,7 @@
   </a>
   <ul *ngIf="!isBartenderUser" class="list-item-ul">
     <li *ngFor="let ingredient of recipe.recipeIngredients" class="ingredient">
-      {{getIngredientName(ingredient)}}
+      {{getIngredientName$(ingredient) | async}}
     </li>
   </ul>
 </div>

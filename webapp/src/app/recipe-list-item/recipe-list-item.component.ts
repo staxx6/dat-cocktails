@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { Recipe, RecipeIngredient } from "../shared/i-recipe";
 import { RouterLink } from "@angular/router";
 import { IApiService } from "../services/i-api-service";
+import {map, Observable} from "rxjs";
 
 @Component({
   selector: 'recipe-list-item',
@@ -21,11 +22,14 @@ export class RecipeListItemComponent {
   }
 
   // Nicht irgendwo speichern?
-  getIngredientName(recipeIngredient: RecipeIngredient): string {
-    const ingredients = this._apiService.getIngredients({ id: recipeIngredient.ingredientId });
-    if (ingredients.length !== 1) {
-      return 'n.a'
-    }
-    return ingredients[0].name;
+  getIngredientName$(recipeIngredient: RecipeIngredient): Observable<string> {
+    return this._apiService.getIngredients$({ id: recipeIngredient.ingredientId }).pipe(
+      map(ingredients => {
+        if (ingredients.length !== 1) {
+          return 'n.a too many matches' // TODO: ERROR Handling!
+        }
+        return ingredients[0].name;
+      })
+    );
   }
 }

@@ -1,6 +1,6 @@
 import express, { Application, json, Request, Response } from 'express';
 import { MongoDbConnectionService } from './services/mongo-db-connection.service.js';
-import { IDbConnection, Ingredient, IngredientFilter } from 'dat-cocktails-types';
+import {IDbConnection, Ingredient, IngredientFilter, RecipeFilter} from 'dat-cocktails-types';
 
 const app = express();
 const port = 8000;
@@ -25,7 +25,6 @@ app.get('/allIngredients', async (req: Request, res: Response) => {
 });
 
 app.post('/ingredients', async (req: Request, res: Response) => {
-    console.log(req.body);
     const filter = req.body as IngredientFilter ?? {};
     res.contentType('application/json');
     res.send(await dbConnection.getIngredients(filter));
@@ -35,6 +34,12 @@ app.post('/ingredients', async (req: Request, res: Response) => {
 app.get('/allRecipes', async (req: Request, res: Response) => {
     res.contentType('application/json');
     res.send(await dbConnection.getAllRecipes());
+});
+
+app.post('/recipes', async (req: Request, res: Response) => {
+    const filter = req.body as RecipeFilter ?? {};
+    res.contentType('application/json');
+    res.send(await dbConnection.getRecipes(filter));
 });
 
 app.listen(port, () => {

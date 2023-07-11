@@ -1,60 +1,62 @@
-<h2>{{recipe.name}}</h2>
-Aktiv? {{recipe.active ? "✔" : "❌"}}
-<ul>
-  <li *ngFor="let recipeIngredient of recipe.recipeIngredients" class="ingredient">
-    <!--    <input type="text">-->
-    {{getIngredientName(recipeIngredient)}} - {{recipeIngredient.amount}} {{getMeasuringUnit(recipeIngredient)}}
-  </li>
-</ul>
-<ol>
-  <li *ngFor="let step of recipe.steps" class="step">
-    <span class="step-text">{{step.text}}</span>
-  </li>
-</ol>
-
-<form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
-  <label>
-    Name:
-    <input type="text" formControlName="name">
-  </label>
-
-  Ingredients:
-  <ul [formArrayName]="'recipeIngredients'">
-    <ng-container *ngFor="let recipeIngredient of formGroup.controls.recipeIngredients.controls; let i = index">
-      <li [formGroupName]="i" class="list-item">
-        <label>
-          Zutat:
-          <select formControlName="ingredientId">
-            <ng-container *ngIf="getAllIngredients$() | async as ingredients">
-              <option *ngFor="let ingredient of ingredients"
-                      [value]="ingredient.id"
-              >
-                {{ ingredient.name }}
-              </option>
-            </ng-container>
-          </select>
-        </label>
-        <label>
-          Menge:
-          <input type="number" formControlName="ingredientAmount" class="input-amount">
-        </label>
-        <label>
-          Einheit:
-          <select formControlName="ingredientUnit">
-            <ng-container *ngFor="let ingredientUnit of Object.keys(MeasuringUnit)">
-              <option [value]="ingredientUnit">{{getMeasuringUnitDisplayName(ingredientUnit)}}</option>
-            </ng-container>
-          </select>
-        </label>
-        <button type="button" (click)="removeRecipeIngredient(i)" class="list-item-remove">X</button>
-      </li>
-    </ng-container>
-    <button type="button" (click)="addRecipeIngredient()" class="add-ingredient">Zutat hinzufügen</button>
+<ng-container *ngIf="recipe">
+  <h2>{{recipe.name}}</h2>
+  Aktiv? {{recipe.active ? "✔" : "❌"}}
+  <ul>
+    <li *ngFor="let recipeIngredient of recipe.recipeIngredients" class="ingredient">
+      <!--    <input type="text">-->
+      {{getIngredientName$(recipeIngredient) | async}} - {{recipeIngredient.amount}} {{getMeasuringUnit(recipeIngredient)}}
+    </li>
   </ul>
+  <ol>
+    <li *ngFor="let step of recipe.steps" class="step">
+      <span class="step-text">{{step.text}}</span>
+    </li>
+  </ol>
 
-  <p>
-    <button type="submit" class="save-list">Speichern</button>
-  </p>
-</form>
+  <form [formGroup]="formGroup" > <!-- (ngSubmit)="onSubmit()" -->
+    <label>
+      Name:
+      <input type="text" formControlName="name">
+    </label>
+
+    Ingredients:
+    <ul [formArrayName]="'recipeIngredients'">
+      <ng-container *ngFor="let recipeIngredient of formGroup.controls.recipeIngredients.controls; let i = index">
+        <li [formGroupName]="i" class="list-item">
+          <label>
+            Zutat:
+            <select formControlName="ingredientId">
+              <ng-container *ngIf="getAllIngredients$() | async as ingredients">
+                <option *ngFor="let ingredient of ingredients"
+                        [value]="ingredient.id"
+                >
+                  {{ ingredient.name }}
+                </option>
+              </ng-container>
+            </select>
+          </label>
+          <label>
+            Menge:
+            <input type="number" formControlName="ingredientAmount" class="input-amount">
+          </label>
+          <label>
+            Einheit:
+            <select formControlName="ingredientUnit">
+              <ng-container *ngFor="let ingredientUnit of Object.keys(MeasuringUnit)">
+                <option [value]="ingredientUnit">{{getMeasuringUnitDisplayName(ingredientUnit)}}</option>
+              </ng-container>
+            </select>
+          </label>
+          <button type="button" (click)="removeRecipeIngredient(i)" class="list-item-remove">X</button>
+        </li>
+      </ng-container>
+      <button type="button" (click)="addRecipeIngredient()" class="add-ingredient">Zutat hinzufügen</button>
+    </ul>
+
+    <p>
+      <button type="submit" class="save-list">Speichern</button>
+    </p>
+  </form>
+</ng-container>
 
 <a class="return-btn" routerLink="../..">Zurück</a>

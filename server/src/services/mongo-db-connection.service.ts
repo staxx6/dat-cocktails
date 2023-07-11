@@ -1,4 +1,4 @@
-import { IDbConnection, IFilter, Ingredient, IngredientFilter, Recipe } from 'dat-cocktails-types';
+import {IDbConnection, IFilter, Ingredient, IngredientFilter, Recipe, RecipeFilter} from 'dat-cocktails-types';
 import { Collection, Db, MongoClient, WithId } from "mongodb";
 
 export class MongoDbConnectionService implements IDbConnection {
@@ -60,6 +60,11 @@ export class MongoDbConnectionService implements IDbConnection {
     async getAllIngredients(): Promise<Ingredient[]> {
         const query = {};
         const cursor = await this._getIngredientCollection().find(query);
+        return await cursor.toArray();
+    }
+
+    async getRecipes(filter: RecipeFilter): Promise<Recipe[]> {
+        const cursor = await this._getRecipesCollection().find(filter);
         return await cursor.toArray();
     }
 

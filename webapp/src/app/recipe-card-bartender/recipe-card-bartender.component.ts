@@ -56,9 +56,9 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
       route
     );
 
-    this.formGroup.controls.name.setValue(this.recipe.name);
+    this.formGroup.controls.name.setValue(this.recipe?.name ?? ''); // FIXME
 
-    this.recipeIngredients = this.recipe.recipeIngredients;
+    this.recipeIngredients = this.recipe?.recipeIngredients ?? [];
     this.createRecipeIngredientControls();
   }
 
@@ -94,27 +94,28 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
 
   /**
    * Saves currently only in memory
+   * FIXME Wieder aktivieren
    */
-  onSubmit(): void {
-    const formCtrls = this.formGroup.controls;
-
-    this.recipe.name = formCtrls.name.value;
-
-    const currRecipeIngredientsSize = this.recipe.recipeIngredients.length;
-
-    this.formGroup.controls.recipeIngredients.value.forEach(recipeIngredientCtrls => {
-      const newId = typeof recipeIngredientCtrls.ingredientId === 'string' ? parseInt(recipeIngredientCtrls.ingredientId) : recipeIngredientCtrls.ingredientId;
-      const newRecipeIngredient: RecipeIngredient = {
-        ingredientId: newId ?? -1,
-        amount: recipeIngredientCtrls.ingredientAmount ?? -1,
-        measuringUnit: recipeIngredientCtrls.ingredientUnit ?? MeasuringUnit.none
-      }
-      this.recipe.recipeIngredients.push(newRecipeIngredient);
-    })
-    // First, add all new recipeIngredients
-    // After that remove the old one, maybe it's safer this way
-    this.recipe.recipeIngredients.splice(0, currRecipeIngredientsSize);
-  }
+  // onSubmit(): void {
+  //   const formCtrls = this.formGroup.controls;
+  //
+  //   this.recipe.name = formCtrls.name.value;
+  //
+  //   const currRecipeIngredientsSize = this.recipe.recipeIngredients.length;
+  //
+  //   this.formGroup.controls.recipeIngredients.value.forEach(recipeIngredientCtrls => {
+  //     const newId = typeof recipeIngredientCtrls.ingredientId === 'string' ? parseInt(recipeIngredientCtrls.ingredientId) : recipeIngredientCtrls.ingredientId;
+  //     const newRecipeIngredient: RecipeIngredient = {
+  //       ingredientId: newId ?? -1,
+  //       amount: recipeIngredientCtrls.ingredientAmount ?? -1,
+  //       measuringUnit: recipeIngredientCtrls.ingredientUnit ?? MeasuringUnit.none
+  //     }
+  //     this.recipe.recipeIngredients.push(newRecipeIngredient);
+  //   })
+  //   // First, add all new recipeIngredients
+  //   // After that remove the old one, maybe it's safer this way
+  //   this.recipe.recipeIngredients.splice(0, currRecipeIngredientsSize);
+  // }
 
   private saveRecipe(): void {
     // TODO:

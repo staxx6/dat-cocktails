@@ -1,8 +1,8 @@
-import { Component, Directive } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Directive } from '@angular/core';
 import { Recipe, RecipeIngredient } from "../shared/i-recipe";
 import { IApiService } from "../services/i-api-service";
 import { ActivatedRoute } from "@angular/router";
+import { map, Observable, tap } from "rxjs";
 
 @Directive({
   selector: "recipe-card",
@@ -10,23 +10,33 @@ import { ActivatedRoute } from "@angular/router";
 })
 export class RecipeCardComponent {
 
-  recipe: Recipe;
+  recipe: Recipe | undefined;
 
   constructor(
     protected _apiService: IApiService,
     private _route: ActivatedRoute
   ) {
     const recipeId = _route.snapshot.paramMap.get('id')!;
-    this.recipe = _apiService.getRecipes({ id: parseInt(recipeId) })[0];
+    _apiService.getRecipes$({ id: parseInt(recipeId) }).pipe(
+      tap(recipes => {
+        if (recipes.length !== 1) {
+          throw new Error(`too many matches for recipe id ${recipeId}!`)
+        }
+        this.recipe = recipes[0];
+      })
+    ).subscribe();
   }
 
   // Nicht irgendwo speichern?
   // Doppelt auch in card component!
-  getIngredientName(recipeIngredient: RecipeIngredient): string {
-    const ingredients = this._apiService.getIngredients({ id: recipeIngredient.ingredientId });
-    if (ingredients.length !== 1) {
-      return 'n.a'
-    }
-    return ingredients[0].name;
+  getIngredientName$(recipeIngredient: RecipeIngredient): Observable<string> {
+    return this._apiService.getIngredients$({ id: recipeIngredient.ingredientId }).pipe(
+      map(ingredients => {
+        if (ingredients.length !== 1) {
+          return 'n.a too many matches' // TODO: ERROR Handling!
+        }
+        return ingredients[0].name;
+      })
+    );
   }
 }
