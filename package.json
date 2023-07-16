@@ -6,11 +6,12 @@
   "scripts": {
     "watch-server": "cd ./server && npm run dev",
     "watch-webapp": "cd ./webapp && npx ng serve",
-    "dev": "concurrently 'npm:watch-*'"
+    "dev": "npx concurrently 'npm:watch-*'",
+    "install-all": "cd ./server && npm install && cd ./../webapp && npm i"
   },
   "author": "staxx6",
   "license": "ISC",
-  "dependencies": {
+  "devDependencies": {
     "concurrently": "^8.2.0"
   }
 }
