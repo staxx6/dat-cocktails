@@ -26,7 +26,7 @@ export class RecipeListItemComponent {
     return this._apiService.getIngredients$({ id: recipeIngredient.ingredientId }).pipe(
       map(ingredients => {
         if (ingredients.length !== 1) {
-          return 'n.a too many matches' // TODO: ERROR Handling!
+          return 'n.a result is != 1' // TODO: ERROR Handling!
         }
         return ingredients[0].name;
       })

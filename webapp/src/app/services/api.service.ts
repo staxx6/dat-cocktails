@@ -4,7 +4,7 @@ import {IApiService, IngredientFilter, RecipeFilter} from './i-api-service';
 import {MeasuringUnit, Recipe, RecipeIngredient} from '../shared/i-recipe';
 import {Ingredient} from '../shared/i-ingredient';
 import {HttpClient} from "@angular/common/http";
-import {Observable, of} from "rxjs";
+import {debounce, delay, interval, map, Observable, of, retryWhen, switchMap, takeWhile, tap} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -23,8 +23,53 @@ export class ApiService implements IApiService {
     // this._ingredients = this.loadIngredients();
   }
 
+  private _cachedRecipesRequests = new Map<number, Recipe[]>();
+  private _pendingRecipesRequests: number[] = [];
+
+  private getCachedRecipesRequest(filter: RecipeFilter): Observable<Recipe[] | undefined> {
+    const filterString = JSON.stringify(filter);
+    const filterHash = this.hashCode(filterString);
+    return interval(100).pipe(
+      map(() => this._pendingRecipesRequests[filterHash]),
+      takeWhile(res => res === undefined),
+      tap(res => {
+        if (res !== undefined) {
+          console.log("DAS SOLLTE NICHT SEIN!!!!")
+        }
+      }),
+      map(() => this._cachedRecipesRequests.get(filterHash))
+    )
+  }
+
+  private cacheRecipesRequest(filter: IngredientFilter, result: Recipe[]): void {
+    const filterString = JSON.stringify(filter);
+    const filterHash = this.hashCode(filterString);
+    this._cachedRecipesRequests.set(filterHash, result);
+    if (this._pendingRecipesRequests[filterHash]) {
+      this._pendingRecipesRequests.slice(filterHash);
+    }
+  }
+
   public getRecipes$(filter: RecipeFilter): Observable<Recipe[]> {
-    return this._http.post<Recipe[]>(this._baseUrl + '/recipes', filter);
+    return this.getCachedRecipesRequest(filter).pipe(
+      switchMap(res => {
+        if (res) {
+          return of(res)
+        }
+        const filterString = JSON.stringify(filter);
+        const filterHash = this.hashCode(filterString);
+        this._pendingRecipesRequests.push(filterHash);
+        return this._http.post<Recipe[]>(this._baseUrl + '/recipes', filter).pipe(
+          tap(res => {
+            this.cacheRecipesRequest(filter, res);
+            this._pendingRecipesRequests.splice(filterHash);
+          })
+        );
+      }),
+    );
+    // return this._http.post<Recipe[]>(this._baseUrl + '/recipes', filter).pipe(
+    //   tap(res => this.cacheRecipesRequest(filter, res))
+    // );
     // const foundRecipes: Recipe[] = [];
     // if (filter.id) {
     //   const foundRecipe = this._recipes.find(recipe => recipe.id === filter.id);
@@ -36,7 +81,7 @@ export class ApiService implements IApiService {
   }
 
   getAllRecipes$(): Observable<Recipe[]> {
-    return this._http.get<Recipe[]>(this._baseUrl + '/allRecipes');
+    return this.getRecipes$({});
   }
 
   private loadRecipes(): Recipe[] {
@@ -74,37 +119,62 @@ export class ApiService implements IApiService {
     return a;
   }
 
-  // 1. Filter toString
-  // 2. String hash
-  // 3. check if in map -> callAPI or take it
-  // private _cachedIngredientsRequests: string[] = [];
-  private _cachedIngredients: Map<string, Ingredient>[] = [];
+  private hashCode(str: string): number {
+    let hash = 0;
+    for (let i = 0, len = str.length; i < len; i++) {
+      let chr = str.charCodeAt(i);
+      hash = (hash << 5) - hash + chr;
+      hash |= 0; // Convert to 32bit integer
+    }
+    return hash;
+  }
 
-  private getCachedIngredients(filter: IngredientFilter): Ingredient[] {
-    return this._cachedIngredients.filter(ingredient => {
-      let matchTags = true;
-      if (ingredient.tags && Array.isArray(ingredient.tags) && filter.tags && Array.isArray(filter.tags)) {
-        if (ingredient.tags.length !== filter.tags.length) {
-          matchTags = false;
-        }
-        ingredient.tags.forEach(tag => {
-          if (!filter.tags?.every(filterTag => ingredient.tags?.includes(filterTag))) {
-            matchTags = false;
-          }
-        })
-      }
+  private _cachedIngredientsRequests = new Map<number, Ingredient[]>();
+  private _pendingIngredientsRequests = new Set<number>;
 
-      return (filter.id ? ingredient.id === filter.id : true)
-        && (filter.name ? ingredient.name === filter.name : true)
-        && matchTags
-    });
+  private getCachedIngredientsRequest(filter: IngredientFilter): Observable<Ingredient[] | undefined> {
+    const filterString = JSON.stringify(filter);
+    const filterHash = this.hashCode(filterString);
+    return of(this._cachedIngredientsRequests.get(filterHash));
+    // return interval(100).pipe(
+    //   delay(50),
+    //   map(() => this._pendingIngredientsRequests[filterHash]),
+    //   takeWhile(res => res === undefined),
+    //   tap(res => {
+    //     if (res !== undefined) {
+    //       console.log("DAS SOLLTE NICHT SEIN!!!!")
+    //     }
+    //   }),
+    //   map(() => this._cachedIngredientsRequests.get(filterHash))
+    // )
+  }
+
+  private cacheIngredientsRequest(filter: IngredientFilter, result: Ingredient[]): void {
+    const filterString = JSON.stringify(filter);
+    const filterHash = this.hashCode(filterString);
+    this._cachedIngredientsRequests.set(filterHash, result);
   }
 
   public getIngredients$(filter: IngredientFilter): Observable<Ingredient[]> {
-
-    return this._http.post<Ingredient[]>(this._baseUrl + '/ingredients', filter);
-    // const a: Ingredient[] = [];
-    // return of(a);
+    const filterString = JSON.stringify(filter);
+    const filterHash = this.hashCode(filterString);
+    return this.getCachedIngredientsRequest(filter).pipe(
+      switchMap(res => {
+        if (res) {
+          return of(res);
+        }
+        if (this._pendingIngredientsRequests.has(filterHash)) {
+          return of([])
+        }
+        this._pendingIngredientsRequests.add(filterHash);
+        return this._http.post<Ingredient[]>(this._baseUrl + '/ingredients', filter).pipe(
+          tap(res => {
+            this.cacheIngredientsRequest(filter, res);
+            this._pendingIngredientsRequests.delete(filterHash);
+          })
+        );
+      }),
+    );
 
     // return this._ingredients.filter(ingredient => {
     //   return this._http.get<Ingredient[]>(this._baseUrl + '/allIngredients');
@@ -152,6 +222,6 @@ export class ApiService implements IApiService {
   }
 
   getAllIngredients$(): Observable<Ingredient[]> {
-    return this._http.get<Ingredient[]>(this._baseUrl + '/allIngredients');
+    return this.getIngredients$({});
   }
 }
