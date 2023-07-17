@@ -33,6 +33,9 @@ export class ApiService implements IApiService {
   private _cachedRecipesRequests = new Map<number, Recipe[]>();
   private _pendingRecipesRequests: number[] = [];
 
+  // Possible of multiple same ingredients id with different other values
+  // because of possibles changes from users in runtime
+  // requestCache need to use has > IngrediendID[] > Ingredients[]
   private _cachedIngredientsRequests = new Map<number, Ingredient[]>();
   private _pendingIngredientsRequests = new Set<number>;
 
