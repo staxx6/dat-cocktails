@@ -6,7 +6,7 @@ export class MongoDbConnectionService implements IDbConnection {
     private readonly _url = 'mongodb://localhost:27017/';
     private readonly _client = new MongoClient(this._url);
 
-    private readonly _dbName = 'dat-cocktails';
+    private readonly _dbName = 'dat-cocktails'; // -test
     private readonly _ingredientsCollectionName = 'ingredients';
     private readonly _recipesCollectionName = 'recipes';
 

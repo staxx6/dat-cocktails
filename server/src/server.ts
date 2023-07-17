@@ -1,5 +1,5 @@
-import express, { Application, json, Request, Response } from 'express';
-import { MongoDbConnectionService } from './services/mongo-db-connection.service.js';
+import express, {Application, json, Request, Response} from 'express';
+import {MongoDbConnectionService} from './services/mongo-db-connection.service.js';
 import {IDbConnection, Ingredient, IngredientFilter, RecipeFilter} from 'dat-cocktails-types';
 
 const app = express();
@@ -27,7 +27,15 @@ app.get('/allIngredients', async (req: Request, res: Response) => {
 app.post('/ingredients', async (req: Request, res: Response) => {
     const filter = req.body as IngredientFilter ?? {};
     res.contentType('application/json');
-    res.send(await dbConnection.getIngredients(filter));
+    const result = await dbConnection.getIngredients(filter);
+    // result.forEach(ingredient => ingredient.filter = filter);
+    console.log(`Request ingredients: ${JSON.stringify(filter)} - Result: ${JSON.stringify(result)}`);
+
+    res.setHeader("Surrogate-Control", "no-store");
+    res.setHeader("Cache-Control", "no-store, no-cache, must-revalidate, proxy-revalidate");
+    res.setHeader("Expires", "0");
+    
+    res.send(result);
 });
 
 // TODO: use recipes with empty filter

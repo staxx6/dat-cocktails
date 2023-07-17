@@ -18,5 +18,7 @@ export abstract class IApiService {
     abstract getRecipes$(filter: RecipeFilter): Observable<Recipe[]>;
     abstract getAllRecipes$(): Observable<Recipe[]>;
     abstract getIngredients$(filter: IngredientFilter): Observable<Ingredient[]>;
+    abstract getCachedIngredientsRequest$(filter: IngredientFilter): Observable<Ingredient[] | undefined>;
     abstract getAllIngredients$(): Observable<Ingredient[]>;
+    abstract createBundledRequestFilter<K extends IFilter>(filters: K[]): object;
 }
