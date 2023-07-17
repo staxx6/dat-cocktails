@@ -1,8 +1,8 @@
 import { Directive } from '@angular/core';
 import { Recipe, RecipeIngredient } from "../shared/i-recipe";
-import { IApiService } from "../services/i-api-service";
+import {IApiService, IngredientFilter} from "../services/i-api-service";
 import { ActivatedRoute } from "@angular/router";
-import { map, Observable, tap } from "rxjs";
+import {map, Observable, of, switchMap, tap} from "rxjs";
 
 @Directive({
   selector: "recipe-card",
@@ -23,6 +23,22 @@ export class RecipeCardComponent {
           throw new Error(`too many matches for recipe id ${recipeId}!`)
         }
         this.recipe = recipes[0];
+      }),
+      switchMap(recipes => {
+        const ingredientFilters: IngredientFilter[] = [];
+        recipes.forEach(recipe => {
+          recipe.recipeIngredients?.forEach(ingredient => {
+            if (!ingredientFilters.find(ingredientFilter => ingredientFilter.id === ingredient.ingredientId)) {
+              ingredientFilters.push({id: ingredient.ingredientId});
+            }
+          });
+        });
+        if (recipes.length > 0) {
+          return this._apiService.getIngredients$(this._apiService.createBundledRequestFilter(ingredientFilters)).pipe(
+            map(() => recipes)
+          );
+        }
+        return of(undefined);
       })
     ).subscribe();
   }
@@ -30,10 +46,13 @@ export class RecipeCardComponent {
   // Nicht irgendwo speichern?
   // Doppelt auch in card component!
   getIngredientName$(recipeIngredient: RecipeIngredient): Observable<string> {
-    return this._apiService.getIngredients$({ id: recipeIngredient.ingredientId }).pipe(
+    return this._apiService.getCachedIngredientsRequest$({ id: recipeIngredient.ingredientId }).pipe(
       map(ingredients => {
+        if (!ingredients) {
+          return 'n.a.';
+        }
         if (ingredients.length !== 1) {
-          return 'n.a too many matches' // TODO: ERROR Handling!
+          return 'n.a too many matches'; // TODO: ERROR Handling!
         }
         return ingredients[0].name;
       })

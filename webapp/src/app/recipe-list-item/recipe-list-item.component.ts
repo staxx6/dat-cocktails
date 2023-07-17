@@ -23,7 +23,8 @@ export class RecipeListItemComponent implements OnDestroy, OnInit {
   }
 
   ngOnInit() {
-    this._createCurrentIngredientRequests();
+    // Handled in recipes-list component
+    // this._createCurrentIngredientRequests();
   }
 
   ngOnDestroy() {

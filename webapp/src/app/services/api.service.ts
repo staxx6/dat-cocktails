@@ -25,24 +25,25 @@ export class ApiService implements IApiService {
 
   private readonly _baseUrl = 'http://localhost:8000';
 
-  // private _recipes: Recipe[];
-  // private _ingredients: Ingredient[];
-
   constructor(
     private _http: HttpClient
   ) {
-    // this._recipes = this.loadRecipes();
-    // this._ingredients = this.loadIngredients();
   }
 
   private _cachedRecipesRequests = new Map<number, Recipe[]>();
   private _pendingRecipesRequests: number[] = [];
 
+  private _cachedIngredientsRequests = new Map<number, Ingredient[]>();
+  private _pendingIngredientsRequests = new Set<number>;
+
+
   private getCachedRecipesRequest(filter: RecipeFilter): Observable<Recipe[] | undefined> {
     const filterString = JSON.stringify(filter);
     const filterHash = this._hashCode(filterString);
     return interval(100).pipe(
-      map(() => this._pendingRecipesRequests[filterHash]),
+      map(() => {
+        return this._pendingRecipesRequests[filterHash];
+      }),
       takeWhile(res => res === undefined),
       tap(res => {
         if (res !== undefined) {
@@ -79,56 +80,10 @@ export class ApiService implements IApiService {
         );
       }),
     );
-    // return this._http.post<Recipe[]>(this._baseUrl + '/recipes', filter).pipe(
-    //   tap(res => this.cacheRecipesRequest(filter, res))
-    // );
-    // const foundRecipes: Recipe[] = [];
-    // if (filter.id) {
-    //   const foundRecipe = this._recipes.find(recipe => recipe.id === filter.id);
-    //   foundRecipes.push(foundRecipe ?? {} as Recipe);
-    // } else {
-    //   throw new Error("Geht nur Filter mit id!");
-    // }
-    // return foundRecipes;
   }
 
   getAllRecipes$(): Observable<Recipe[]> {
     return this.getRecipes$({});
-  }
-
-  private loadRecipes(): Recipe[] {
-    //
-    // if (!recipesJson) {
-    //   throw new Error("No Reciepts found");
-    // }
-    //
-    // if (!Array.isArray(recipesJson)) {
-    //   throw new Error("Recieps json is not an array");
-    // }
-    //
-    // const loadedRecipes: Recipe[] = [];
-    //
-    // recipesJson.forEach(recipe => {
-    //   const newRecipe = {} as Recipe;
-    //   newRecipe.id = recipe.id;
-    //   newRecipe.name = recipe.name;
-    //   newRecipe.active = recipe.active;
-    //   newRecipe.recipeIngredients = [];
-    //   recipe.recipeIngredients.forEach(recipeIngredient => {
-    //     const newRecipeIngredient = {} as RecipeIngredient;
-    //     newRecipeIngredient.ingredientId = recipeIngredient.ingredientId;
-    //     newRecipeIngredient.amount = recipeIngredient.amount;
-    //     newRecipeIngredient.measuringUnit = MeasuringUnit[recipeIngredient.measuringUnit as keyof typeof MeasuringUnit];
-    //     newRecipe.recipeIngredients.push(newRecipeIngredient);
-    //   });
-    //   newRecipe.steps = recipe.steps;
-    //
-    //   loadedRecipes.push(newRecipe);
-    // })
-    //
-    // return loadedRecipes;
-    const a: Recipe[] = [];
-    return a;
   }
 
   private _hashCode(toHash: string | object): number {
@@ -144,21 +99,18 @@ export class ApiService implements IApiService {
     return hash;
   }
 
-  private _cachedIngredientsRequests = new Map<number, Ingredient[]>();
-  private _pendingIngredientsRequests = new Set<number>;
-
   /**
    * TODO: When reload old data?
    * @param filter
    */
   getCachedIngredientsRequest$(filter: IngredientFilter): Observable<Ingredient[] | undefined> {
-    const filterString = JSON.stringify(filter);
-    const filterHash = this._hashCode(filterString);
+    const filterHash = this._hashCode(filter);
     let foundIngredients: Ingredient[] = [];
     const hashResult = this._cachedIngredientsRequests.get(filterHash);
     if (hashResult) {
       foundIngredients.push(...hashResult);
     } else {
+      // Search in all cached results
       Array.from(this._cachedIngredientsRequests.values()).filter(ingredients => {
         ingredients.forEach(ingredient => {
           let matchTags = true;
@@ -189,8 +141,7 @@ export class ApiService implements IApiService {
   }
 
   private _cacheIngredientsRequest(filter: IngredientFilter, result: Ingredient[]): void {
-    const filterString = JSON.stringify(filter);
-    const filterHash = this._hashCode(filterString);
+    const filterHash = this._hashCode(filter);
     this._cachedIngredientsRequests.set(filterHash, result);
   }
 
@@ -205,22 +156,16 @@ export class ApiService implements IApiService {
       }
       return result;
     }, {});
-
-    // this.getIngredients$(combinedFilter).pipe(
-    //   // requestMethod(combinedFilter).pipe(
-    //   // tap(res => res.forEach(ingredient => {
-    //   //   if (ingredient.filter) {
-    //   //     // Perhaps stupid
-    //   //     this._cacheIngredientsRequest(ingredient.filter, [ingredient]);
-    //   //   }
-    //   // }))
-    // ).subscribe();
   }
 
 
   public getIngredients$(filter: IngredientFilter): Observable<Ingredient[]> {
-    const filterString = JSON.stringify(filter);
-    const filterHash = this._hashCode(filterString);
+
+    if(Object.keys(filter).length === 0) {
+      return of([]);
+    }
+
+    const filterHash = this._hashCode(filter);
 
     // if (this._pendingIngredientsRequests.has(filterHash)) {
     //   return of([]);
@@ -260,52 +205,7 @@ export class ApiService implements IApiService {
           })
         );
       }),
-      // catchError(() => [])
     );
-
-    // return this._ingredients.filter(ingredient => {
-    //   return this._http.get<Ingredient[]>(this._baseUrl + '/allIngredients');
-    //
-    //   let matchTags = true;
-    //   if (ingredient.tags && Array.isArray(ingredient.tags) && filter.tags && Array.isArray(filter.tags)) {
-    //     if (ingredient.tags.length !== filter.tags.length) {
-    //       matchTags = false;
-    //     }
-    //     ingredient.tags.forEach(tag => {
-    //       if (!filter.tags?.every(filterTag => ingredient.tags?.includes(filterTag))) {
-    //         matchTags = false;
-    //       }
-    //     })
-    //   }
-    //
-    //   return filter.id ? ingredient.id === filter.id : true
-    //     && filter.name ? ingredient.name === filter.name : true
-    //   && matchTags
-    // })
-  }
-
-
-  private loadIngredients(): Ingredient[] {
-    // if (!ingredientsJson) {
-    //   throw new Error("No Reciepts found");
-    // }
-    //
-    // if (!Array.isArray(ingredientsJson)) {
-    //   throw new Error("Recieps json is not an array");
-    // }
-    //
-    // const newIngredientArr: Ingredient[] = [];
-    //
-    // ingredientsJson.forEach(ingredient => {
-    //   const newIngredient = {} as Ingredient;
-    //   newIngredient.id = ingredient.id;
-    //   newIngredient.name = ingredient.name;
-    //   newIngredientArr.push(newIngredient);
-    // })
-    //
-    // return newIngredientArr;
-    const a: Ingredient[] = [];
-    return a;
   }
 
   getAllIngredients$(): Observable<Ingredient[]> {
