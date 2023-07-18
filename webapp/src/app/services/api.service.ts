@@ -33,10 +33,8 @@ export class ApiService implements IApiService {
   private _cachedRecipesRequests = new Map<number, Recipe[]>();
   private _pendingRecipesRequests: number[] = [];
 
-  // Possible of multiple same ingredients id with different other values
-  // because of possibles changes from users in runtime
-  // requestCache need to use has > IngrediendID[] > Ingredients[]
-  private _cachedIngredientsRequests = new Map<number, Ingredient[]>();
+  private _cachedIngredientsRequests = new Map<number, number[]>();
+  private _cachedIngredients = new Map<number, Ingredient>();
   private _pendingIngredientsRequests = new Set<number>;
 
 
@@ -111,33 +109,36 @@ export class ApiService implements IApiService {
     let foundIngredients: Ingredient[] = [];
     const hashResult = this._cachedIngredientsRequests.get(filterHash);
     if (hashResult) {
-      foundIngredients.push(...hashResult);
+      hashResult.forEach(id => {
+        const cachedIngredient = this._cachedIngredients.get(id);
+        if (cachedIngredient) {
+          foundIngredients.push(cachedIngredient);
+        }
+      })
     } else {
       // Search in all cached results
-      Array.from(this._cachedIngredientsRequests.values()).filter(ingredients => {
-        ingredients.forEach(ingredient => {
-          let matchTags = true;
-          if (ingredient.tags && Array.isArray(ingredient.tags) && filter.tags && Array.isArray(filter.tags)) {
-            if (ingredient.tags.length !== filter.tags.length) {
+      Array.from(this._cachedIngredients.values()).filter(ingredient => {
+        let matchTags = true;
+        if (ingredient.tags && Array.isArray(ingredient.tags) && filter.tags && Array.isArray(filter.tags)) {
+          if (ingredient.tags.length !== filter.tags.length) {
+            matchTags = false;
+          }
+          ingredient.tags.forEach(tag => {
+            if (!filter.tags?.every(filterTag => ingredient.tags?.includes(filterTag))) {
               matchTags = false;
             }
-            ingredient.tags.forEach(tag => {
-              if (!filter.tags?.every(filterTag => ingredient.tags?.includes(filterTag))) {
-                matchTags = false;
-              }
-            })
-          }
+          })
+        }
 
-          if (
-            filter.id ? ingredient.id === filter.id : true
-            && filter.name ? ingredient.name === filter.name : true
-              && matchTags
-          ) {
-            if (!foundIngredients.find(toCheck => toCheck.id === ingredient.id)) {
-              foundIngredients.push(ingredient);
-            }
+        if (
+          filter.id ? ingredient.id === filter.id : true
+          && filter.name ? ingredient.name === filter.name : true
+            && matchTags
+        ) {
+          if (!foundIngredients.find(toCheck => toCheck.id === ingredient.id)) {
+            foundIngredients.push(ingredient);
           }
-        })
+        }
       });
     }
     return of(foundIngredients.length === 0 ? undefined : foundIngredients);
@@ -145,7 +146,12 @@ export class ApiService implements IApiService {
 
   private _cacheIngredientsRequest(filter: IngredientFilter, result: Ingredient[]): void {
     const filterHash = this._hashCode(filter);
-    this._cachedIngredientsRequests.set(filterHash, result);
+    const ingredientIds: number[] = [];
+    result.forEach(ingredient => {
+      this._cachedIngredients.set(ingredient.id, ingredient);
+      ingredientIds.push(ingredient.id);
+    })
+    this._cachedIngredientsRequests.set(filterHash, ingredientIds);
   }
 
   createBundledRequestFilter<K extends IFilter>(filters: K[]): object {
@@ -164,7 +170,7 @@ export class ApiService implements IApiService {
 
   public getIngredients$(filter: IngredientFilter): Observable<Ingredient[]> {
 
-    if(Object.keys(filter).length === 0) {
+    if (Object.keys(filter).length === 0) {
       return of([]);
     }
 
