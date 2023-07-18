@@ -24,7 +24,7 @@
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/dat-cocktails",
+            "outputPath": "dist/dat-cocktails/browser",
             "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": [
@@ -98,6 +98,61 @@
               "zone.js/testing"
             ]
           }
+        },
+        "server": {
+          "builder": "@angular-devkit/build-angular:server",
+          "options": {
+            "outputPath": "dist/dat-cocktails/server",
+            "main": "server.ts",
+            "tsConfig": "tsconfig.server.json",
+            "inlineStyleLanguage": "scss"
+          },
+          "configurations": {
+            "production": {
+              "outputHashing": "media"
+            },
+            "development": {
+              "buildOptimizer": false,
+              "optimization": false,
+              "sourceMap": true,
+              "extractLicenses": false,
+              "vendorChunk": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve-ssr": {
+          "builder": "@nguniversal/builders:ssr-dev-server",
+          "configurations": {
+            "development": {
+              "browserTarget": "dat-cocktails:build:development",
+              "serverTarget": "dat-cocktails:server:development"
+            },
+            "production": {
+              "browserTarget": "dat-cocktails:build:production",
+              "serverTarget": "dat-cocktails:server:production"
+            }
+          },
+          "defaultConfiguration": "development"
+        },
+        "prerender": {
+          "builder": "@nguniversal/builders:prerender",
+          "options": {
+            "routes": [
+              "/"
+            ]
+          },
+          "configurations": {
+            "production": {
+              "browserTarget": "dat-cocktails:build:production",
+              "serverTarget": "dat-cocktails:server:production"
+            },
+            "development": {
+              "browserTarget": "dat-cocktails:build:development",
+              "serverTarget": "dat-cocktails:server:development"
+            }
+          },
+          "defaultConfiguration": "production"
         }
       }
     }
