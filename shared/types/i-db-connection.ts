@@ -1,5 +1,5 @@
 import { Recipe } from "./i-recipe";
-import {IFilter, IngredientFilter, RecipeFilter} from "./i-filter";
+import { IFilter, IngredientFilter, RecipeFilter } from "./i-filter";
 import { Ingredient } from "./i-ingredient";
 
 /**
@@ -13,6 +13,8 @@ export interface IDbConnection {
     get(filter: IFilter): Promise<any[]>;
 
     getRecipes(filter: RecipeFilter): Promise<Recipe[]>;
+
+    updateRecipe(recipe: Recipe): Promise<boolean>;
 
     getAllRecipes(): Promise<Recipe[]>;
 

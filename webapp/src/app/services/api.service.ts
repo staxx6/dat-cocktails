@@ -1,19 +1,17 @@
-import {Injectable} from '@angular/core';
+import { Injectable } from '@angular/core';
 
-import {IApiService, IngredientFilter, RecipeFilter} from './i-api-service';
-import {IFilter, Ingredient} from 'dat-cocktails-types';
-import {MeasuringUnit, Recipe, RecipeIngredient} from '../shared/i-recipe';
-import {HttpClient} from "@angular/common/http";
+import { IApiService, IngredientFilter, RecipeFilter } from './i-api-service';
+import { IFilter, Ingredient } from 'dat-cocktails-types';
+import { Recipe } from '../shared/i-recipe';
+import { HttpClient } from "@angular/common/http";
 import {
   catchError,
   delay,
-  interval,
   map,
   Observable,
   of,
   retry,
   switchMap, take,
-  takeWhile,
   tap,
   throwError
 } from "rxjs";
@@ -30,61 +28,169 @@ export class ApiService implements IApiService {
   ) {
   }
 
-  private _cachedRecipesRequests = new Map<number, Recipe[]>();
-  private _pendingRecipesRequests: number[] = [];
+  private _cachedRecipesRequests = new Map<number, number[]>();
+  private _cachedRecipes = new Map<number, Recipe>();
+  private _pendingRecipesRequests = new Set<number>;
 
   private _cachedIngredientsRequests = new Map<number, number[]>();
   private _cachedIngredients = new Map<number, Ingredient>();
   private _pendingIngredientsRequests = new Set<number>;
 
 
-  private getCachedRecipesRequest(filter: RecipeFilter): Observable<Recipe[] | undefined> {
-    const filterString = JSON.stringify(filter);
-    const filterHash = this._hashCode(filterString);
-    return interval(100).pipe(
-      map(() => {
-        return this._pendingRecipesRequests[filterHash];
-      }),
-      takeWhile(res => res === undefined),
-      tap(res => {
-        if (res !== undefined) {
-          console.log("DAS SOLLTE NICHT SEIN!!!!")
+  // private getCachedRecipesRequest(filter: RecipeFilter): Observable<Recipe[] | undefined> {
+  //   const filterString = JSON.stringify(filter);
+  //   const filterHash = this._hashCode(filterString);
+  //   return interval(100).pipe(
+  //     map(() => {
+  //       return this._pendingRecipesRequests[filterHash];
+  //     }),
+  //     takeWhile(res => res === undefined),
+  //     tap(res => {
+  //       if (res !== undefined) {
+  //         console.log("DAS SOLLTE NICHT SEIN!!!!")
+  //       }
+  //     }),
+  //     map(() => this._cachedRecipesRequests.get(filterHash))
+  //   )
+  // }
+
+  getCachedRecipesRequest$(filter: IngredientFilter): Observable<Recipe[] | undefined> {
+    const filterHash = this._hashCode(filter);
+    let foundRecipes: Recipe[] = [];
+    const hashResult = this._cachedRecipesRequests.get(filterHash);
+    if (hashResult) {
+      hashResult.forEach(id => {
+        const cachedRecipe = this._cachedRecipes.get(id);
+        if (cachedRecipe) {
+          foundRecipes.push(cachedRecipe);
         }
-      }),
-      map(() => this._cachedRecipesRequests.get(filterHash))
-    )
-  }
+      })
+    } else {
+      // Search in all cached results
+      Array.from(this._cachedRecipes.values()).filter(recipe => {
+        let matchTags = true;
+        if (recipe.tags && Array.isArray(recipe.tags) && filter.tags && Array.isArray(filter.tags)) {
+          if (recipe.tags.length !== filter.tags.length) {
+            matchTags = false;
+          }
+          recipe.tags.forEach(tag => {
+            if (!filter.tags?.every(filterTag => recipe.tags?.includes(filterTag))) {
+              matchTags = false;
+            }
+          })
+        }
 
-  private cacheRecipesRequest(filter: IngredientFilter, result: Recipe[]): void {
-    const filterString = JSON.stringify(filter);
-    const filterHash = this._hashCode(filterString);
-    this._cachedRecipesRequests.set(filterHash, result);
-    if (this._pendingRecipesRequests[filterHash]) {
-      this._pendingRecipesRequests.slice(filterHash);
+        if (
+          filter.id ? recipe.id === filter.id : true
+          && filter.name ? recipe.name === filter.name : true
+            && matchTags
+        ) {
+          if (!foundRecipes.find(toCheck => toCheck.id === recipe.id)) {
+            foundRecipes.push(recipe);
+          }
+        }
+      });
     }
+    return of(foundRecipes.length === 0 ? undefined : foundRecipes);
   }
 
-  public getRecipes$(filter: RecipeFilter): Observable<Recipe[]> {
-    return this.getCachedRecipesRequest(filter).pipe(
+  // private cacheRecipesRequest(filter: IngredientFilter, result: Recipe[]): void {
+  //   const filterString = JSON.stringify(filter);
+  //   const filterHash = this._hashCode(filterString);
+  //   this._cachedRecipesRequests.set(filterHash, result);
+  //   if (this._pendingRecipesRequests[filterHash]) {
+  //     this._pendingRecipesRequests.slice(filterHash);
+  //   }
+  // }
+
+  private _cacheRecipesRequest(filter: RecipeFilter, result: Recipe[]): void {
+    const filterHash = this._hashCode(filter);
+    const recipeIds: number[] = [];
+    result.forEach(recipe => {
+      this._cachedRecipes.set(recipe.id, recipe);
+      recipeIds.push(recipe.id);
+    })
+    this._cachedRecipesRequests.set(filterHash, recipeIds);
+  }
+
+  // getRecipes$(filter: RecipeFilter): Observable<Recipe[]> {
+  //   return this.getCachedRecipesRequest(filter).pipe(
+  //     switchMap(res => {
+  //       if (res) {
+  //         return of(res)
+  //       }
+  //       const filterString = JSON.stringify(filter);
+  //       const filterHash = this._hashCode(filterString);
+  //       this._pendingRecipesRequests.push(filterHash);
+  //       return this._http.post<Recipe[]>(this._baseUrl + '/recipes', filter).pipe(
+  //         tap(res => {
+  //           this.cacheRecipesRequest(filter, res);
+  //           this._pendingRecipesRequests.splice(filterHash);
+  //         })
+  //       );
+  //     }),
+  //   );
+  // }
+
+  getRecipes$(filter: RecipeFilter): Observable<Recipe[]> {
+
+    if (Object.keys(filter).length === 0) {
+      return of([]);
+    } else if (filter.id === -1) {
+      filter = {};
+    }
+
+    const filterHash = this._hashCode(filter);
+
+    // if (this._pendingRecipesRequests.has(filterHash)) {
+    //   return of([]);
+    // }
+
+    return this.getCachedRecipesRequest$(filter).pipe(
       switchMap(res => {
         if (res) {
-          return of(res)
+          return of(res);
         }
-        const filterString = JSON.stringify(filter);
-        const filterHash = this._hashCode(filterString);
-        this._pendingRecipesRequests.push(filterHash);
+        if (this._pendingRecipesRequests.has(filterHash)) {
+          return of(true).pipe(
+            delay(100),
+            map(() => {
+              if (this._pendingRecipesRequests.has(filterHash)) {
+                throw new Error("Still pending request");
+              }
+            }),
+            retry(100),
+            take(1),
+            switchMap(() => this.getCachedRecipesRequest$(filter)),
+            map(res => res ?? [])
+          );
+        }
+        this._pendingRecipesRequests.add(filterHash);
         return this._http.post<Recipe[]>(this._baseUrl + '/recipes', filter).pipe(
           tap(res => {
-            this.cacheRecipesRequest(filter, res);
-            this._pendingRecipesRequests.splice(filterHash);
+            if (res.length !== 0) {
+              this._cacheRecipesRequest(filter, res);
+            }
+            this._pendingRecipesRequests.delete(filterHash);
+          }),
+          catchError(error => {
+            console.error('Error fetching recipes from server: ', error);
+            this._pendingRecipesRequests.delete(filterHash);
+            return throwError(error);
           })
         );
       }),
     );
   }
 
+  updateRecipe(recipe: Recipe): boolean {
+    this._cachedRecipes.set(recipe.id, recipe);
+    this._http.put<Recipe[]>(this._baseUrl + '/recipe', recipe).subscribe();
+    return false; // TODO: wait for result
+  }
+
   getAllRecipes$(): Observable<Recipe[]> {
-    return this.getRecipes$({});
+    return this.getRecipes$({id: -1});
   }
 
   private _hashCode(toHash: string | object): number {
@@ -167,11 +273,12 @@ export class ApiService implements IApiService {
     }, {});
   }
 
-
-  public getIngredients$(filter: IngredientFilter): Observable<Ingredient[]> {
+  getIngredients$(filter: IngredientFilter): Observable<Ingredient[]> {
 
     if (Object.keys(filter).length === 0) {
       return of([]);
+    } else if (filter.id === -1) {
+      filter = {};
     }
 
     const filterHash = this._hashCode(filter);
@@ -218,6 +325,6 @@ export class ApiService implements IApiService {
   }
 
   getAllIngredients$(): Observable<Ingredient[]> {
-    return this.getIngredients$({});
+    return this.getIngredients$({id: -1});
   }
 }

@@ -68,6 +68,14 @@ export class MongoDbConnectionService implements IDbConnection {
         return await cursor.toArray();
     }
 
+    async updateRecipe(recipe: Recipe): Promise<boolean> {
+        // TODO: Return result
+        delete (recipe as any)['_id'];
+        await this._getRecipesCollection().replaceOne({id: recipe.id}, recipe);
+        console.log(`updated recipe with id: ${recipe.id}`);
+        return true;
+    }
+
     async getAllRecipes(): Promise<Recipe[]> {
         const query = {};
         const cursor = await this._getRecipesCollection().find(query);
