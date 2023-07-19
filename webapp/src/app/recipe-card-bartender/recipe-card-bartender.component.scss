@@ -21,3 +21,12 @@
 .add-ingredient {
   margin: 0.5em;
 }
+
+form {
+  display: flex;
+  flex-direction: column;
+}
+
+.list-item-step-text {
+  width: 20em;
+}

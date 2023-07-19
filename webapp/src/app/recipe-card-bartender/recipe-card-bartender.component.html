@@ -18,8 +18,12 @@
       Name:
       <input type="text" formControlName="name">
     </label>
+    <label>
+      Active:
+      <input type="checkbox" formControlName="active">
+    </label>
 
-    Ingredients:
+    Zutaten:
     <ul [formArrayName]="'recipeIngredients'">
       <ng-container *ngFor="let recipeIngredient of formGroup.controls.recipeIngredients.controls; let i = index">
         <li [formGroupName]="i" class="list-item">
@@ -52,6 +56,24 @@
       </ng-container>
       <button type="button" (click)="addRecipeIngredient()" class="add-ingredient">Zutat hinzufügen</button>
     </ul>
+
+    Schritte:
+    <ol [formArrayName]="'steps'">
+      <ng-container *ngFor="let steps of formGroup.controls.steps.controls; let i = index">
+        <li [formGroupName]="i" class="list-item">
+          <label>
+            <!-- Text: -->
+            <textarea type="text" formControlName="text" class="list-item-step-text"></textarea>
+          </label>
+          <!-- <label>
+            Bild:
+            <img src="" alt="">
+          </label> -->
+          <button type="button" (click)="removeStep(i)" class="list-item-remove">X</button>
+        </li>
+      </ng-container>
+      <button type="button" (click)="addStep()" class="add-ingredient">Schritt hinzufügen</button>
+    </ol>
 
     <p>
       <button type="submit" class="save-list">Speichern</button>

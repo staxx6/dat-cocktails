@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { IApiService } from "../services/i-api-service";
 import { ActivatedRoute, RouterLink } from "@angular/router";
 import { RecipeCardComponent } from "../recipe-card/recipe-card.component";
-import { MeasuringUnit, RecipeIngredient } from "../shared/i-recipe";
+import { MeasuringUnit, RecipeIngredient, RecipeStep } from "../shared/i-recipe";
 import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { Ingredient } from "../shared/i-ingredient";
 import { Observable } from "rxjs";
@@ -33,15 +33,28 @@ export interface IFormGroupModel {
 })
 export class RecipeCardBartenderComponent extends RecipeCardComponent implements OnInit {
 
+  // Visibility for template
+  protected readonly MeasuringUnit = MeasuringUnit;
+  protected readonly Object = Object;
+
   recipeIngredients: RecipeIngredient[] = [];
+  steps: RecipeStep[] = [];
 
   formGroup = this._formBuilder.group({
     name: '',
+    active: false,
     recipeIngredients: this._formBuilder.array([
       this._formBuilder.group({
         ingredientId: -1,
         ingredientAmount: -1,
         ingredientUnit: MeasuringUnit.none
+      })
+    ]),
+    steps: this._formBuilder.array([
+      this._formBuilder.group({
+        // orderNumber: -1,
+        text: '',
+        picture: ''
       })
     ])
   })
@@ -58,14 +71,47 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
 
     this.recipeChanged.subscribe(recipe => {
       this.formGroup.controls.name.setValue(recipe?.name ?? '');
+      this.formGroup.controls.active.setValue(recipe?.active ?? false);
 
       this.recipeIngredients = recipe?.recipeIngredients ?? [];
       this.createRecipeIngredientControls();
+
+      this.steps = recipe?.steps ?? [];
+      this.createStepControls();
     })
+  }
+
+  private createStepControls(): void {
+    if (this.steps.length !== 0) {
+      // Remove dummy controls
+      this.formGroup.controls.steps.removeAt(0);
+    }
+    this.steps.forEach(step => {
+      this.addStep(step);
+    })
+  }
+
+  addStep(step?: RecipeStep): void {
+    if (!step) {
+      step = {
+        orderNumber: this.steps[this.steps.length - 1].orderNumber + 1,
+        text: '',
+        picture: ''
+      }
+    }
+
+    this.formGroup.controls.steps.push(
+      this._formBuilder.group({
+        // orderNumber: step.orderNumber,
+        text: step.text,
+        picture: step.picture ?? ''
+      })
+    );
   }
 
   private createRecipeIngredientControls(): void {
     if (this.recipeIngredients.length !== 0) {
+      // Remove dummy controls
       this.formGroup.controls.recipeIngredients.removeAt(0);
     }
     this.recipeIngredients.forEach(recipeIngredient => {
@@ -106,9 +152,12 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
     const formCtrls = this.formGroup.controls;
 
     this.recipe.name = formCtrls.name.value;
+    this.recipe.active = formCtrls.active.value;
 
+    //
+    // Ingredients
+    //
     const currRecipeIngredientsSize = this.recipe.recipeIngredients.length;
-
     this.formGroup.controls.recipeIngredients.value.forEach(recipeIngredientCtrls => {
       const newId = typeof recipeIngredientCtrls.ingredientId === 'string' ? parseInt(recipeIngredientCtrls.ingredientId) : recipeIngredientCtrls.ingredientId;
       const newRecipeIngredient: RecipeIngredient = {
@@ -121,6 +170,22 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
     // First, add all new recipeIngredients
     // After that remove the old one, maybe it's safer this way
     this.recipe.recipeIngredients.splice(0, currRecipeIngredientsSize);
+
+    //
+    // Steps
+    //
+    const currStepsSize = this.recipe.steps.length;
+    this.formGroup.controls.steps.value.forEach(stepCtrls => {
+      // const newId = typeof stepCtrls.ingredientId === 'string' ? parseInt(stepCtrls.ingredientId) : stepCtrls.ingredientId;
+      const newStep: RecipeStep = {
+        text: stepCtrls.text ?? '',
+        orderNumber: -1
+      }
+      this.recipe!.steps.push(newStep);
+    })
+    // First, add all new steps
+    // After that remove the old one, maybe it's safer this way
+    this.recipe.steps.splice(0, currStepsSize);
 
     this._apiService.updateRecipe(this.recipe);
   }
@@ -135,6 +200,10 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
     // this.recipeIngredientsFormArray.removeAt(index);
   }
 
+  removeStep(index: number): void {
+    this.formGroup.controls.steps.removeAt(index);
+  }
+
   getMeasuringUnit(recipeIngredient: RecipeIngredient): string {
     return recipeIngredient.measuringUnit;
   }
@@ -146,7 +215,4 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
   getAllIngredients$(): Observable<Ingredient[]> {
     return this._apiService.getAllIngredients$();
   }
-
-  protected readonly MeasuringUnit = MeasuringUnit;
-  protected readonly Object = Object;
 }
