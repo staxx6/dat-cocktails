@@ -10,6 +10,7 @@ export enum MeasuringUnit {
     tl = "tl", // Teelöffel
     gtl = "gtl", // gestrichener Teelöffel
     drop = "drop", // Für Bitters
+    piece = "Stück",
     none = ""
 }
 

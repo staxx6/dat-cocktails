@@ -37,6 +37,8 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
   protected readonly MeasuringUnit = MeasuringUnit;
   protected readonly Object = Object;
 
+  private _allPossibleIngredients: Ingredient[] = [];
+
   recipeIngredients: RecipeIngredient[] = [];
   steps: RecipeStep[] = [];
 
@@ -78,7 +80,9 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
 
       this.steps = recipe?.steps ?? [];
       this.createStepControls();
-    })
+    });
+
+    this._apiService.getAllIngredients$().subscribe(res => this._allPossibleIngredients = res);
   }
 
   private createStepControls(): void {
@@ -212,7 +216,7 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
     return MeasuringUnit[unit as keyof typeof MeasuringUnit].toString();
   }
 
-  getAllIngredients$(): Observable<Ingredient[]> {
-    return this._apiService.getAllIngredients$();
+  getAllPossibleIngredients():Ingredient[] {
+    return this._allPossibleIngredients;
   }
 }

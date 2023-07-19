@@ -1,17 +1,38 @@
+:host {
+  margin: 1em 5em;
+  background-color: #f1f3f6;
+  padding: 1em;
+}
+
+h2 {
+  margin: 0 0 1em;
+}
+
 .step-text {
   margin-left: 1em;
 }
 
-.input-amount {
+.list-item {
+  display: flex;
+  flex-direction: row;
+}
+
+.list-item-input {
   width: 2em;
 }
 
-.input-unit {
-  width: 2em;
+.list-item-input-unit {
+  width: 5em;
+}
+
+.list-item-input-ingredient {
+  width: 15em;
 }
 
 .list-item label {
   margin: 0.25em;
+  display: flex;
+  flex-direction: row;
 }
 
 .list-item-remove {
@@ -28,5 +49,14 @@ form {
 }
 
 .list-item-step-text {
-  width: 20em;
+  width: 30em;
+}
+
+.list-item-name {
+  width: 30em;
+  margin-top: 2em;
+}
+
+label {
+  margin: 0.5em;
 }

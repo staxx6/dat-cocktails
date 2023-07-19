@@ -16,7 +16,7 @@
   <form [formGroup]="formGroup"  (ngSubmit)="onSubmit()">
     <label>
       Name:
-      <input type="text" formControlName="name">
+      <input type="text" formControlName="name" class="list-item-name">
     </label>
     <label>
       Active:
@@ -28,26 +28,23 @@
       <ng-container *ngFor="let recipeIngredient of formGroup.controls.recipeIngredients.controls; let i = index">
         <li [formGroupName]="i" class="list-item">
           <label>
-            Zutat:
-            <select formControlName="ingredientId">
-              <ng-container *ngIf="getAllIngredients$() | async as ingredients">
+            <input type="number" formControlName="ingredientAmount" class="list-item-input list-item-input-amount">
+          </label>
+          <label>
+            <select formControlName="ingredientUnit" class="list-item-input list-item-input-unit">
+              <ng-container *ngFor="let ingredientUnit of Object.keys(MeasuringUnit)">
+                <option [value]="ingredientUnit">{{getMeasuringUnitDisplayName(ingredientUnit)}}</option>
+              </ng-container>
+            </select>
+          </label>
+          <label>
+            <select formControlName="ingredientId" class="list-item-input list-item-input-ingredient">
+              <ng-container *ngIf="getAllPossibleIngredients() as ingredients">
                 <option *ngFor="let ingredient of ingredients"
                         [value]="ingredient.id"
                 >
                   {{ ingredient.name }}
                 </option>
-              </ng-container>
-            </select>
-          </label>
-          <label>
-            Menge:
-            <input type="number" formControlName="ingredientAmount" class="input-amount">
-          </label>
-          <label>
-            Einheit:
-            <select formControlName="ingredientUnit">
-              <ng-container *ngFor="let ingredientUnit of Object.keys(MeasuringUnit)">
-                <option [value]="ingredientUnit">{{getMeasuringUnitDisplayName(ingredientUnit)}}</option>
               </ng-container>
             </select>
           </label>
@@ -62,8 +59,11 @@
       <ng-container *ngFor="let steps of formGroup.controls.steps.controls; let i = index">
         <li [formGroupName]="i" class="list-item">
           <label>
+            {{i}}.
+          </label>
+          <label>
             <!-- Text: -->
-            <textarea type="text" formControlName="text" class="list-item-step-text"></textarea>
+            <textarea type="text" formControlName="text" class="list-item-step-text" rows="3"></textarea>
           </label>
           <!-- <label>
             Bild:
