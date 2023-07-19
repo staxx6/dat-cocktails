@@ -1,9 +1,9 @@
-import {Component, Input, OnDestroy, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {Recipe, RecipeIngredient} from "../shared/i-recipe";
-import {RouterLink} from "@angular/router";
-import {IApiService, IngredientFilter} from "../services/i-api-service";
-import {catchError, map, Observable, tap, throwError} from "rxjs";
+import { Component, Input, OnDestroy, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Recipe, RecipeIngredient } from "../shared/i-recipe";
+import { RouterLink } from "@angular/router";
+import { IApiService, IngredientFilter } from "../services/i-api-service";
+import { catchError, map, Observable, tap, throwError } from "rxjs";
 
 @Component({
   selector: 'recipe-list-item',
@@ -19,7 +19,6 @@ export class RecipeListItemComponent implements OnDestroy, OnInit {
   constructor(
     private _apiService: IApiService,
   ) {
-
   }
 
   ngOnInit() {

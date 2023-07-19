@@ -1,10 +1,10 @@
-import {Component, OnInit} from '@angular/core';
-import {CommonModule} from '@angular/common';
-import {Recipe} from "../shared/i-recipe";
-import {IApiService, IngredientFilter} from "../services/i-api-service";
-import {RecipeListItemComponent} from "../recipe-list-item/recipe-list-item.component";
-import {Router} from "@angular/router";
-import {finalize, forkJoin, map, mergeMap, Observable, of, switchMap, take, tap} from "rxjs";
+import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Recipe } from "../shared/i-recipe";
+import { IApiService, IngredientFilter } from "../services/i-api-service";
+import { RecipeListItemComponent } from "../recipe-list-item/recipe-list-item.component";
+import { Router } from "@angular/router";
+import { map, Observable, of, switchMap, take, tap } from "rxjs";
 
 @Component({
   selector: 'recipes-list',
@@ -23,24 +23,18 @@ export class RecipesListComponent implements OnInit {
     private _apiService: IApiService,
     private _router: Router
   ) {
-    // this.recipes$ = forkJoin([
-    //   _apiService.getAllRecipes$().pipe(
-    //     tap(recipes => {
-    //       console.log(1);
-    //       recipes.forEach(recipe => {
-    //         recipe.recipeIngredients?.forEach(ingredient => {
-    //           this._ingredientFilters.push({id: ingredient.ingredientId});
-    //         });
-    //       })
-    //     })
-    //   ),
-    //   this._apiService.getIngredients$(this._apiService.createBundledRequestFilter(this._ingredientFilters)).pipe(
-    //     tap(() => console.log(2))
-    //   )
-    // ]).pipe(
-    //   map(res => res[0])
-    // );
-    this.recipes$ = _apiService.getAllRecipes$().pipe(
+    this.recipes$ = this.loadAllRecipes();
+    this.isBartenderUser = _router.url.includes('bartender');
+
+    _apiService.getRecipeChangedSubject().pipe(
+      // This won't work cus loadAllRecipes is saved in cache with the origin stuff
+      // it's clearing now, but loadAllRecipes is not getting fresh data?
+      switchMap(() => this.recipes$ = this.loadAllRecipes())
+    ).subscribe();
+  }
+
+  private loadAllRecipes(): Observable<Recipe[]> {
+    return this._apiService.getAllRecipes$().pipe(
       tap(recipes => {
         recipes.forEach(recipe => {
           recipe.recipeIngredients?.forEach(ingredient => {
@@ -60,7 +54,6 @@ export class RecipesListComponent implements OnInit {
       }),
       take(1)
     );
-    this.isBartenderUser = _router.url.includes('bartender');
   }
 
   ngOnInit() {
@@ -79,5 +72,9 @@ export class RecipesListComponent implements OnInit {
       })
     ).subscribe();
     this._apiService.getIngredients$(this._apiService.createBundledRequestFilter(ingredientFilters)).subscribe();
+  }
+
+  addRecipe() {
+    this._apiService.newRecipeDummy('Dein neues Rezept');
   }
 }

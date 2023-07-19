@@ -1,16 +1,17 @@
 import { Injectable } from '@angular/core';
 
 import { IApiService, IngredientFilter, RecipeFilter } from './i-api-service';
-import { IFilter, Ingredient } from 'dat-cocktails-types';
+import { IFilter, Ingredient, RecipeStep } from 'dat-cocktails-types';
 import { Recipe } from '../shared/i-recipe';
 import { HttpClient } from "@angular/common/http";
 import {
+  BehaviorSubject,
   catchError,
   delay,
   map,
   Observable,
   of,
-  retry,
+  retry, Subject,
   switchMap, take,
   tap,
   throwError
@@ -23,19 +24,19 @@ export class ApiService implements IApiService {
 
   private readonly _baseUrl = 'http://localhost:8000';
 
-  constructor(
-    private _http: HttpClient
-  ) {
-  }
-
   private _cachedRecipesRequests = new Map<number, number[]>();
   private _cachedRecipes = new Map<number, Recipe>();
   private _pendingRecipesRequests = new Set<number>;
+  recipesChanged$ = new Subject<null>();
 
   private _cachedIngredientsRequests = new Map<number, number[]>();
   private _cachedIngredients = new Map<number, Ingredient>();
   private _pendingIngredientsRequests = new Set<number>;
 
+  constructor(
+    private _http: HttpClient
+  ) {
+  }
 
   // private getCachedRecipesRequest(filter: RecipeFilter): Observable<Recipe[] | undefined> {
   //   const filterString = JSON.stringify(filter);
@@ -107,7 +108,10 @@ export class ApiService implements IApiService {
     const filterHash = this._hashCode(filter);
     const recipeIds: number[] = [];
     result.forEach(recipe => {
-      this._cachedRecipes.set(recipe.id, recipe);
+      if (!this._cachedRecipes.get(recipe.id)) {
+        this._cachedRecipes.set(recipe.id, recipe);
+        // this.recipesChanged$.next(null);
+      }
       recipeIds.push(recipe.id);
     })
     this._cachedRecipesRequests.set(filterHash, recipeIds);
@@ -149,6 +153,7 @@ export class ApiService implements IApiService {
     return this.getCachedRecipesRequest$(filter).pipe(
       switchMap(res => {
         if (res) {
+          // FIXME: for "all" filter even one cached item the chain stops here
           return of(res);
         }
         if (this._pendingRecipesRequests.has(filterHash)) {
@@ -184,9 +189,35 @@ export class ApiService implements IApiService {
   }
 
   updateRecipe(recipe: Recipe): boolean {
-    this._cachedRecipes.set(recipe.id, recipe);
+    if (!this._cachedRecipes.get(recipe.id)) {
+      this._cachedRecipes.set(recipe.id, recipe);
+      // this.recipesChanged$.next(null);
+    }
     this._http.put<Recipe[]>(this._baseUrl + '/recipe', recipe).subscribe();
     return false; // TODO: wait for result
+  }
+
+  newRecipeDummy(name: string): void {
+    const newRecipe = <Recipe>{
+      id: -2,
+      name: name,
+      active: false,
+      steps: [<RecipeStep>{
+        orderNumber: -1,
+        text: ''
+      }]
+    }
+    if (!this._cachedRecipes.get(newRecipe.id)) {
+      this.clearCacheRecipes();
+      this._cachedRecipes.set(newRecipe.id, newRecipe);
+      this.recipesChanged$.next(null);
+    }
+    // this._http.post<boolean>(this._baseUrl + '/recipe', newRecipe).subscribe();
+  }
+
+  clearCacheRecipes(): void {
+    this._cachedRecipes.clear();
+    this._cachedRecipesRequests.clear();
   }
 
   getAllRecipes$(): Observable<Recipe[]> {
@@ -326,5 +357,9 @@ export class ApiService implements IApiService {
 
   getAllIngredients$(): Observable<Ingredient[]> {
     return this.getIngredients$({id: -1});
+  }
+
+  getRecipeChangedSubject(): Subject<null> {
+    return this.recipesChanged$;
   }
 }
