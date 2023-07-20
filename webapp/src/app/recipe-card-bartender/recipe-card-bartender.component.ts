@@ -1,12 +1,11 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { IApiService } from "../services/i-api-service";
-import { ActivatedRoute, RouterLink } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { RecipeCardComponent } from "../recipe-card/recipe-card.component";
 import { MeasuringUnit, RecipeIngredient, RecipeStep } from "../shared/i-recipe";
 import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { Ingredient } from "../shared/i-ingredient";
-import { Observable } from "rxjs";
 
 export interface IRecipeIngredientsFormModel {
   ingredientId: FormControl<number>,
@@ -64,7 +63,8 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
   constructor(
     apiService: IApiService,
     route: ActivatedRoute,
-    private _formBuilder: NonNullableFormBuilder
+    private _formBuilder: NonNullableFormBuilder,
+    private _router: Router
   ) {
     super(
       apiService,
@@ -141,6 +141,7 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
     );
   }
 
+
   ngOnInit() {
   }
 
@@ -149,7 +150,7 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
    * FIXME Wieder aktivieren
    */
   onSubmit(): void {
-    if(!this.recipe) {
+    if (!this.recipe) {
       throw new Error("Saving without a recipe shouldn't be possible!");
     }
 
@@ -198,8 +199,16 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
     }
   }
 
-  private saveRecipe(): void {
-    // TODO:
+  /**
+   * TODO: own popup
+   */
+  async deleteRecipe(): Promise<undefined> {
+    if (confirm('Soll das Rezept wirklich gelöscht werden?')) {
+      if (this.recipe) {
+        this._apiService.deleteRecipe(this.recipe);
+      }
+    }
+    await this._router.navigate(['/bartender']);
   }
 
   removeRecipeIngredient(index: number): void {
@@ -220,7 +229,7 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
     return MeasuringUnit[unit as keyof typeof MeasuringUnit].toString();
   }
 
-  getAllPossibleIngredients():Ingredient[] {
+  getAllPossibleIngredients(): Ingredient[] {
     return this._allPossibleIngredients;
   }
 }

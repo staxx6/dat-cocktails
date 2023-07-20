@@ -18,6 +18,7 @@ export abstract class IApiService {
     abstract getRecipes$(filter: RecipeFilter): Observable<Recipe[]>;
     abstract updateRecipe(recipe: Recipe): boolean;
     abstract createRecipe(recipe: Recipe): boolean;
+    abstract deleteRecipe(recipe: Recipe): boolean;
     abstract newRecipeDummy(name: string): void;
     abstract getAllRecipes$(): Observable<Recipe[]>;
     abstract getAllCachedRecipes$(): Observable<Recipe[]>;

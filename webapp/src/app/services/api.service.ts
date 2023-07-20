@@ -213,6 +213,15 @@ export class ApiService implements IApiService {
     return true; // TODO
   }
 
+  deleteRecipe(recipe: Recipe): boolean {
+    if (recipe.id === -2) { // New, not DB saved recipe
+      this._cachedRecipes.delete(-2);
+    } else {
+      throw new Error('Delete DB saved ....')
+    }
+    return true; // TODO:
+  }
+
   newRecipeDummy(name: string): void {
     const newRecipe = <Recipe>{
       id: -2,

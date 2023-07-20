@@ -25,7 +25,7 @@ export class RecipeCardComponent {
 
   constructor(
     protected _apiService: IApiService,
-    private _route: ActivatedRoute
+    protected _route: ActivatedRoute
   ) {
     const recipeId = _route.snapshot.paramMap.get('id')!;
     _apiService.getRecipes$({id: parseInt(recipeId)}).pipe(

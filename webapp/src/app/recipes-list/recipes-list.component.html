@@ -14,4 +14,6 @@
     <li *ngIf="!recipes.length">No cocktails available.</li>
   </ng-container>
 </ul>
-<button type="button" (click)="addRecipe()" class="">Rezept hinzufügen</button>
+<ng-container *ngIf="isBartenderUser">
+  <button type="button" (click)="addRecipe()" class="">Rezept hinzufügen</button>
+</ng-container>
