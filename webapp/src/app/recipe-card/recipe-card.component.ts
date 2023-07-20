@@ -32,7 +32,8 @@ export class RecipeCardComponent {
       take(1),
       tap(recipes => {
         if (recipes.length !== 1) {
-          throw new Error(`too many matches for recipe id ${recipeId}!`)
+          // Show error site
+          throw new Error(`Too many or no matches for recipe with id: ${recipeId}!`)
         }
         this.recipe = recipes[0];
       }),

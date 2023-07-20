@@ -50,10 +50,17 @@ app.post('/recipes', async (req: Request, res: Response) => {
     res.send(await dbConnection.getRecipes(filter));
 });
 
+// Create
+app.post('/recipe', async (req: Request, res: Response) => {
+    const resultId = await dbConnection.createRecipe(req.body as Recipe);
+    console.table(resultId);
+    res.send({id: resultId}); // TODO
+})
+
 app.put('/recipe', async (req: Request, res: Response) => {
     const result = await dbConnection.updateRecipe(req.body as Recipe); // what with empty?
     console.table(result);
-    res.send(true);
+    res.send(true); // TODO
 });
 
 app.listen(port, () => {

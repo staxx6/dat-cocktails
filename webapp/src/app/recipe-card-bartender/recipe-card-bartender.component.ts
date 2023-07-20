@@ -191,7 +191,11 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
     // After that remove the old one, maybe it's safer this way
     this.recipe.steps.splice(0, currStepsSize);
 
-    this._apiService.updateRecipe(this.recipe);
+    if (this.recipe.id === -2 || this.recipe.id === undefined) { // new recipe
+      this._apiService.createRecipe(this.recipe); // gets new ID
+    } else {
+      this._apiService.updateRecipe(this.recipe);
+    }
   }
 
   private saveRecipe(): void {

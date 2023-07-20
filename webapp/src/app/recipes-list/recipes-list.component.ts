@@ -23,18 +23,25 @@ export class RecipesListComponent implements OnInit {
     private _apiService: IApiService,
     private _router: Router
   ) {
-    this.recipes$ = this.loadAllRecipes();
+    this.recipes$ = this._apiService.getAllRecipes$().pipe(
+      switchMap(() => this.loadAllCachedRecipes())
+    );
+
     this.isBartenderUser = _router.url.includes('bartender');
 
     _apiService.getRecipeChangedSubject().pipe(
       // This won't work cus loadAllRecipes is saved in cache with the origin stuff
       // it's clearing now, but loadAllRecipes is not getting fresh data?
-      switchMap(() => this.recipes$ = this.loadAllRecipes())
+      switchMap(() => this.recipes$ = this.loadAllCachedRecipes())
     ).subscribe();
   }
 
-  private loadAllRecipes(): Observable<Recipe[]> {
-    return this._apiService.getAllRecipes$().pipe(
+  private fetchAllRecipes(): Observable<Recipe[]> {
+    return this._apiService.getAllRecipes$();
+  }
+
+  private loadAllCachedRecipes(): Observable<Recipe[]> {
+    return this._apiService.getAllCachedRecipes$().pipe(
       tap(recipes => {
         recipes.forEach(recipe => {
           recipe.recipeIngredients?.forEach(ingredient => {

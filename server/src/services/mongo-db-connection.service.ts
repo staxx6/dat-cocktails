@@ -73,7 +73,24 @@ export class MongoDbConnectionService implements IDbConnection {
         delete (recipe as any)['_id'];
         await this._getRecipesCollection().replaceOne({id: recipe.id}, recipe);
         console.log(`updated recipe with id: ${recipe.id}`);
-        return true;
+        return true; // TODO
+    }
+
+    async createRecipe(recipe: Recipe): Promise<number> {
+        // Please explain ki result :)
+        const result = await this._getRecipesCollection().find({}, { projection: { id: 1 } }).sort({ id: -1 }).limit(1).toArray();
+        console.log('result from find: ' + JSON.stringify(result));
+        let resultId;
+        if (result.length !== 0) {
+            resultId = result[0].id + 1;
+        } else {
+            resultId = 0;
+        }
+        console.log('new resiltID: ' + resultId);
+        recipe.id = resultId;
+        await this._getRecipesCollection().insertOne(recipe);
+        console.log(`created recipe: ` + JSON.stringify(recipe));
+        return resultId; // TODO
     }
 
     async getAllRecipes(): Promise<Recipe[]> {

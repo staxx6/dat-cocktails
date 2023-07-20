@@ -1,21 +1,10 @@
 import { Injectable } from '@angular/core';
 
 import { IApiService, IngredientFilter, RecipeFilter } from './i-api-service';
-import { IFilter, Ingredient, RecipeStep } from 'dat-cocktails-types';
+import { IFilter, Ingredient, MeasuringUnit, RecipeIngredient, RecipeStep } from 'dat-cocktails-types';
 import { Recipe } from '../shared/i-recipe';
 import { HttpClient } from "@angular/common/http";
-import {
-  BehaviorSubject,
-  catchError,
-  delay,
-  map,
-  Observable,
-  of,
-  retry, Subject,
-  switchMap, take,
-  tap,
-  throwError
-} from "rxjs";
+import { catchError, delay, map, Observable, of, retry, Subject, switchMap, take, tap, throwError } from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -67,6 +56,9 @@ export class ApiService implements IApiService {
         }
       })
     } else {
+      if (Object.keys(filter).length === 0) {
+        return of(undefined);
+      }
       // Search in all cached results
       Array.from(this._cachedRecipes.values()).filter(recipe => {
         let matchTags = true;
@@ -93,6 +85,10 @@ export class ApiService implements IApiService {
       });
     }
     return of(foundRecipes.length === 0 ? undefined : foundRecipes);
+  }
+
+  getAllCachedRecipes$(): Observable<Recipe[]> {
+    return of(Array.from(this._cachedRecipes.values()));
   }
 
   // private cacheRecipesRequest(filter: IngredientFilter, result: Recipe[]): void {
@@ -178,6 +174,10 @@ export class ApiService implements IApiService {
             }
             this._pendingRecipesRequests.delete(filterHash);
           }),
+          map(() => {
+            // cached hat evtl mehr, z.B. durch neu erstellte im client.
+            return Array.from(this._cachedRecipes.values());
+          }),
           catchError(error => {
             console.error('Error fetching recipes from server: ', error);
             this._pendingRecipesRequests.delete(filterHash);
@@ -197,18 +197,39 @@ export class ApiService implements IApiService {
     return false; // TODO: wait for result
   }
 
+  createRecipe(recipe: Recipe): boolean {
+    if (!this._cachedRecipes.get(recipe.id)) {
+      this._cachedRecipes.set(recipe.id, recipe);
+      // this.recipesChanged$.next(null);
+    }
+    this._http.post(this._baseUrl + '/recipe', recipe).pipe(
+      tap((res: any) => {
+        const newId = res['id'];
+        this._cachedRecipes.delete(recipe.id);
+        recipe.id = newId;
+        this._cachedRecipes.set(newId, recipe);
+      })
+    ).subscribe();
+    return true; // TODO
+  }
+
   newRecipeDummy(name: string): void {
     const newRecipe = <Recipe>{
       id: -2,
       name: name,
       active: false,
+      recipeIngredients: [<RecipeIngredient>{
+        ingredientId: -1,
+        measuringUnit: "", // Don't know why enum not working here.
+        amount: 0
+      }],
       steps: [<RecipeStep>{
         orderNumber: -1,
         text: ''
       }]
     }
     if (!this._cachedRecipes.get(newRecipe.id)) {
-      this.clearCacheRecipes();
+      // this.clearCacheRecipes();
       this._cachedRecipes.set(newRecipe.id, newRecipe);
       this.recipesChanged$.next(null);
     }
