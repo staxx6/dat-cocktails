@@ -18,6 +18,8 @@ export interface IDbConnection {
 
     createRecipe(recipe: Recipe): Promise<number>;
 
+    deleteRecipe(id: number): Promise<boolean>;
+
     getAllRecipes(): Promise<Recipe[]>;
 
     getIngredients(filter: IngredientFilter): Promise<Ingredient[]>;

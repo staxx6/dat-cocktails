@@ -104,4 +104,9 @@ export class MongoDbConnectionService implements IDbConnection {
         return await cursor.toArray();
     }
 
+    async deleteRecipe(id: number): Promise<boolean> {
+        await this._getRecipesCollection().deleteOne({id: id});
+        console.log(`Deleted recipe with id: ${id}`);
+        return true;
+    }
 }

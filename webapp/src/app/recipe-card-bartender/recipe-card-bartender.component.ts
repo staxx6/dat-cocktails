@@ -6,6 +6,7 @@ import { RecipeCardComponent } from "../recipe-card/recipe-card.component";
 import { MeasuringUnit, RecipeIngredient, RecipeStep } from "../shared/i-recipe";
 import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from "@angular/forms";
 import { Ingredient } from "../shared/i-ingredient";
+import { Observable, switchMap } from "rxjs";
 
 export interface IRecipeIngredientsFormModel {
   ingredientId: FormControl<number>,
@@ -202,13 +203,14 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
   /**
    * TODO: own popup
    */
-  async deleteRecipe(): Promise<undefined> {
+  deleteRecipe(): void {
     if (confirm('Soll das Rezept wirklich gelöscht werden?')) {
       if (this.recipe) {
-        this._apiService.deleteRecipe(this.recipe);
+        this._apiService.deleteRecipe(this.recipe).pipe(
+          switchMap(() => this._router.navigate(['/bartender']))
+        ).subscribe();
       }
     }
-    await this._router.navigate(['/bartender']);
   }
 
   removeRecipeIngredient(index: number): void {

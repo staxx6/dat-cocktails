@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { IApiService, IngredientFilter, RecipeFilter } from './i-api-service';
 import { IFilter, Ingredient, MeasuringUnit, RecipeIngredient, RecipeStep } from 'dat-cocktails-types';
 import { Recipe } from '../shared/i-recipe';
-import { HttpClient } from "@angular/common/http";
+import { HttpClient, HttpParams } from "@angular/common/http";
 import { catchError, delay, map, Observable, of, retry, Subject, switchMap, take, tap, throwError } from "rxjs";
 
 @Injectable({
@@ -213,13 +213,16 @@ export class ApiService implements IApiService {
     return true; // TODO
   }
 
-  deleteRecipe(recipe: Recipe): boolean {
-    if (recipe.id === -2) { // New, not DB saved recipe
-      this._cachedRecipes.delete(-2);
-    } else {
-      throw new Error('Delete DB saved ....')
+  deleteRecipe(recipe: Recipe): Observable<boolean> {
+    if (recipe.id !== -2) { // New, not DB saved recipe
+      const httpParams = new HttpParams().set('id', recipe.id);
+      return this._http.delete(this._baseUrl + '/recipe', { params: httpParams}).pipe(
+        tap(() => this._cachedRecipes.delete(recipe.id)),
+        map(() => true)
+      );
     }
-    return true; // TODO:
+    this._cachedRecipes.delete(recipe.id);
+    return of(true); // TODO:
   }
 
   newRecipeDummy(name: string): void {

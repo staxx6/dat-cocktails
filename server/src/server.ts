@@ -9,7 +9,7 @@ app.use(json());
 
 app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Origin", "*");
-    res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT");
+    res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT, DELETE");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
     next();
 });
@@ -59,6 +59,13 @@ app.post('/recipe', async (req: Request, res: Response) => {
 
 app.put('/recipe', async (req: Request, res: Response) => {
     const result = await dbConnection.updateRecipe(req.body as Recipe); // what with empty?
+    console.table(result);
+    res.send(true); // TODO
+});
+
+app.delete('/recipe', async (req: Request, res: Response) => {
+    console.log('try to delete: ' + JSON.stringify(req.query['id']));
+    const result = await dbConnection.deleteRecipe(parseInt(<string>req.query['id'])); // what with empty?
     console.table(result);
     res.send(true); // TODO
 });
