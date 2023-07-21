@@ -1,4 +1,4 @@
-<ul class="cocktails-list">
+<ul class="cocktails-list p-2">
   <ng-container *ngIf="(recipes$ | async) as recipes">
     <ng-container *ngFor="let recipe of recipes">
       <ng-container *ngIf="isBartenderUser ? true : recipe.active">

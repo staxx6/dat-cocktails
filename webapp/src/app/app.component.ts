@@ -9,7 +9,14 @@ import { HeaderComponent } from "./header/header.component";
   selector: 'root',
   standalone: true,
   imports: [CommonModule, RouterOutlet, RecipeCardUserComponent, HeaderComponent],
-  templateUrl: './app.component.html',
+  template: `
+    <div class="flex flex-col">
+      <dc-header/>
+      <main>
+          <router-outlet></router-outlet>
+      </main>
+    </div>
+  `,
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
