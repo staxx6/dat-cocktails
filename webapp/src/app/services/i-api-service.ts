@@ -1,7 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Recipe } from '../shared/i-recipe';
-import { Ingredient } from '../shared/i-ingredient';
-import { IFilter } from 'dat-cocktails-types';
+import { IFilter, Recipe, Ingredient, MeasuringUnit, MeasuringUnitFilter } from 'dat-cocktails-types';
 import { Observable, Subject } from "rxjs";
 
 
@@ -27,4 +25,8 @@ export abstract class IApiService {
     abstract getAllIngredients$(): Observable<Ingredient[]>;
     abstract createBundledRequestFilter<K extends IFilter>(filters: K[]): object;
     abstract getRecipeChangedSubject(): Subject<null>;
+    abstract getMeasuringUnits$(filter: MeasuringUnitFilter): Observable<MeasuringUnit[]>;
+    abstract getAllMeasuringUnits$(): Observable<MeasuringUnit[]>;
+    abstract getCachedMeasuringUnitRequest$(filter: MeasuringUnitFilter): Observable<MeasuringUnit[] | undefined>;
+    abstract getBasePictureUrl(): string;
 }

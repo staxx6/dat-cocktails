@@ -1,17 +1,23 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { IApiService } from "../services/i-api-service";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
+import { FormArray,
+  FormControl,
+  FormGroup,
+  NonNullableFormBuilder,
+  ReactiveFormsModule
+} from "@angular/forms";
+import { switchMap } from "rxjs";
+
+import { RecipeIngredient, RecipeStep, Ingredient, MeasuringUnit } from "dat-cocktails-types";
+
+import { IApiService } from "../services/i-api-service";
 import { RecipeCardComponent } from "../recipe-card/recipe-card.component";
-import { MeasuringUnit, RecipeIngredient, RecipeStep } from "../shared/i-recipe";
-import { FormArray, FormControl, FormGroup, NonNullableFormBuilder, ReactiveFormsModule } from "@angular/forms";
-import { Ingredient } from "../shared/i-ingredient";
-import { Observable, switchMap } from "rxjs";
 
 export interface IRecipeIngredientsFormModel {
   ingredientId: FormControl<number>,
   ingredientAmount: FormControl<number>,
-  ingredientUnit: FormControl<MeasuringUnit>
+  ingredientUnitId: FormControl<number>
 }
 
 export interface IFormGroupModel {
@@ -34,10 +40,11 @@ export interface IFormGroupModel {
 export class RecipeCardBartenderComponent extends RecipeCardComponent implements OnInit {
 
   // Visibility for template
-  protected readonly MeasuringUnit = MeasuringUnit;
+  // protected readonly MeasuringUnit = MeasuringUnit;
   protected readonly Object = Object;
 
   private _allPossibleIngredients: Ingredient[] = [];
+  private _allPossibleMeasuringUnits: MeasuringUnit[] = [];
 
   recipeIngredients: RecipeIngredient[] = [];
   steps: RecipeStep[] = [];
@@ -49,14 +56,14 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
       this._formBuilder.group({
         ingredientId: -1,
         ingredientAmount: -1,
-        ingredientUnit: MeasuringUnit.none
+        ingredientUnitId: -1
       })
     ]),
     steps: this._formBuilder.array([
       this._formBuilder.group({
         // orderNumber: -1,
         text: '',
-        picture: ''
+        // picture: ''
       })
     ])
   })
@@ -84,6 +91,7 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
     });
 
     this._apiService.getAllIngredients$().subscribe(res => this._allPossibleIngredients = res);
+    this._apiService.getAllMeasuringUnits$().subscribe(res => this._allPossibleMeasuringUnits = res);
   }
 
   private createStepControls(): void {
@@ -101,7 +109,7 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
       step = {
         orderNumber: this.steps[this.steps.length - 1].orderNumber + 1,
         text: '',
-        picture: ''
+        // picture: ''
       }
     }
 
@@ -109,7 +117,7 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
       this._formBuilder.group({
         // orderNumber: step.orderNumber,
         text: step.text,
-        picture: step.picture ?? ''
+        // picture: step.picture ?? ''
       })
     );
   }
@@ -129,7 +137,7 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
       recipeIngredient = {
         ingredientId: -1,
         amount: 1,
-        measuringUnit: MeasuringUnit.none
+        measuringUnitId: -1
       }
     }
 
@@ -137,7 +145,7 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
       this._formBuilder.group({
         ingredientId: recipeIngredient.ingredientId,
         ingredientAmount: recipeIngredient.amount,
-        ingredientUnit: recipeIngredient.measuringUnit
+        ingredientUnitId: recipeIngredient.measuringUnitId
       })
     );
   }
@@ -166,10 +174,11 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
     const currRecipeIngredientsSize = this.recipe.recipeIngredients.length;
     this.formGroup.controls.recipeIngredients.value.forEach(recipeIngredientCtrls => {
       const newId = typeof recipeIngredientCtrls.ingredientId === 'string' ? parseInt(recipeIngredientCtrls.ingredientId) : recipeIngredientCtrls.ingredientId;
+      const newIdMeasuringUnit = typeof recipeIngredientCtrls.ingredientUnitId === 'string' ? parseInt(recipeIngredientCtrls.ingredientUnitId) : recipeIngredientCtrls.ingredientUnitId;
       const newRecipeIngredient: RecipeIngredient = {
         ingredientId: newId ?? -1,
         amount: recipeIngredientCtrls.ingredientAmount ?? -1,
-        measuringUnit: recipeIngredientCtrls.ingredientUnit ?? MeasuringUnit.none
+        measuringUnitId: newIdMeasuringUnit ?? -1
       }
       this.recipe!.recipeIngredients.push(newRecipeIngredient);
     })
@@ -193,6 +202,17 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
     // After that remove the old one, maybe it's safer this way
     this.recipe.steps.splice(0, currStepsSize);
 
+    //
+    // Picture
+    //
+    // if (this._selectedFile) {
+    //   const formData = new FormData();
+    //   formData.append('image', this._selectedFile);
+    // }
+
+    //
+    // API
+    //
     if (this.recipe.id === -2 || this.recipe.id === undefined) { // new recipe
       this._apiService.createRecipe(this.recipe); // gets new ID
     } else {
@@ -223,15 +243,43 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
     this.formGroup.controls.steps.removeAt(index);
   }
 
-  getMeasuringUnit(recipeIngredient: RecipeIngredient): string {
-    return recipeIngredient.measuringUnit;
+  getMeasuringUnitName(recipeIngredient: RecipeIngredient): string {
+    return "TODO 1";
   }
 
-  getMeasuringUnitDisplayName(unit: string): string {
-    return MeasuringUnit[unit as keyof typeof MeasuringUnit].toString();
+  getMeasuringUnitDisplayName(id: number): string {
+    return "TODO 2";
+  }
+
+  getAllMeasuringUnitsId(): number[] {
+    return [-1]; // TODO
   }
 
   getAllPossibleIngredients(): Ingredient[] {
     return this._allPossibleIngredients;
+  }
+
+  getAllPossibleMeasuringUnits(): MeasuringUnit[] {
+    return this._allPossibleMeasuringUnits;
+  }
+
+  private _selectedFile: File | null = null;
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    if (input.files?.length) {
+      const reader = new FileReader();
+      reader.readAsDataURL(input.files[0]);
+      reader.onload = () => {
+        if (this.recipe) {
+          this.recipe.pictureB64 = reader.result as string;
+        }
+      }
+      // this._selectedFile = input.files[0];
+    }
+  }
+
+  getRecipePicture(): string {
+    return `${this._apiService.getBasePictureUrl()}/${this.recipe?.pictureFileIdWithExt}`;
   }
 }

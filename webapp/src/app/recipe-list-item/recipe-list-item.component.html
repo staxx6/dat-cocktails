@@ -1,11 +1,19 @@
-<div *ngIf="recipe" class="card list-item rounded">
-  <img *ngIf="recipe.picture" [src]="recipe.picture" alt="Cover"/>
-  <a [routerLink]="['cocktail', recipe.id]" class="card-title text-gray-900">
-    <h2 class="">{{ recipe.name }}</h2>
-  </a>
-  <ul *ngIf="!isBartenderUser" class="list-item-ul">
-    <li *ngFor="let ingredient of recipe.recipeIngredients" class="text-gray-700">
-      {{getIngredientName$(ingredient) | async}}
-    </li>
-  </ul>
+<div *ngIf="recipe" class="card card-side bg-base-100 shadow-xl m-5">
+  <figure>
+    <img *ngIf="recipe.pictureFileIdWithExt"
+         [src]="getRecipePicture()"
+         alt="Cover"
+         class="w-20"
+    />
+  </figure>
+  <div class="card-body p-4">
+    <a [routerLink]="['cocktail', recipe.id]" class="card-title">
+      <h2 class="">{{ recipe.name }}</h2>
+    </a>
+    <ul *ngIf="!isBartenderUser" class="">
+      <li *ngFor="let ingredient of recipe.recipeIngredients" class="">
+        {{getIngredientName$(ingredient) | async}}
+      </li>
+    </ul>
+  </div>
 </div>

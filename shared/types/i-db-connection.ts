@@ -1,6 +1,7 @@
 import { Recipe } from "./i-recipe";
 import { IFilter, IngredientFilter, RecipeFilter } from "./i-filter";
 import { Ingredient } from "./i-ingredient";
+import { MeasuringUnit, MeasuringUnitFilter } from "./i-measuring-unit";
 
 /**
  * No need to be in shared
@@ -25,4 +26,6 @@ export interface IDbConnection {
     getIngredients(filter: IngredientFilter): Promise<Ingredient[]>;
 
     getAllIngredients(): Promise<Ingredient[]>;
+
+    getMeasuringUnits(filter: MeasuringUnitFilter): Promise<MeasuringUnit[]>;
 }

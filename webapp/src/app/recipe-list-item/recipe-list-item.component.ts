@@ -1,6 +1,6 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Recipe, RecipeIngredient } from "../shared/i-recipe";
+import { Recipe, RecipeIngredient } from "dat-cocktails-types";
 import { RouterLink } from "@angular/router";
 import { IApiService, IngredientFilter } from "../services/i-api-service";
 import { catchError, map, Observable, tap, throwError } from "rxjs";
@@ -52,5 +52,9 @@ export class RecipeListItemComponent implements OnDestroy, OnInit {
         return throwError(err);
       })
     );
+  }
+
+  getRecipePicture(): string {
+    return `${this._apiService.getBasePictureUrl()}/${this.recipe?.pictureFileIdWithExt}`;
   }
 }

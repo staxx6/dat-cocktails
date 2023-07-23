@@ -1,8 +1,8 @@
 import { Directive } from '@angular/core';
-import { Recipe, RecipeIngredient } from "../shared/i-recipe";
 import { IApiService, IngredientFilter } from "../services/i-api-service";
 import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject, distinctUntilChanged, map, Observable, of, Subject, switchMap, take, tap } from "rxjs";
+import { MeasuringUnit, Recipe, RecipeIngredient } from 'dat-cocktails-types';
 
 @Directive({
   selector: "recipe-card",
@@ -71,4 +71,22 @@ export class RecipeCardComponent {
       })
     );
   }
+
+  getMeasuringUnitName$(measuringUnitId: number): Observable<string> {
+    return this._apiService.getCachedMeasuringUnitRequest$({id: measuringUnitId}).pipe(
+      map(measuringUnit => {
+        if (!measuringUnit) {
+          return 'n.a.';
+        }
+        if (measuringUnit.length !== 1) {
+          return 'n.a too many matches'; // TODO: ERROR Handling!
+        }
+        return measuringUnit[0].name;
+      })
+    );
+  }
+
+  // getDCName$(measuringUnit: MeasuringUnit): Observable<string> {
+  //   return this._apiService.get
+  // }
 }

@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Recipe } from "../shared/i-recipe";
+import { Recipe } from "dat-cocktails-types";
 import { IApiService, IngredientFilter } from "../services/i-api-service";
 import { RecipeListItemComponent } from "../recipe-list-item/recipe-list-item.component";
 import { Router } from "@angular/router";

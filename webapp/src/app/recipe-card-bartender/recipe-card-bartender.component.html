@@ -1,12 +1,13 @@
 <div class="bg-base-100 rounded p-3">
   <ng-container *ngIf="recipe">
     <h2>{{recipe.name}}</h2>
+    <img [src]="getRecipePicture()" class="w-36"/>
     Aktiv? {{recipe.active ? "✔" : "❌"}}
     <ul>
       <li *ngFor="let recipeIngredient of recipe.recipeIngredients" class="ingredient">
         <!--    <input type="text">-->
         {{getIngredientName$(recipeIngredient) | async}}
-        - {{recipeIngredient.amount}} {{getMeasuringUnit(recipeIngredient)}}
+        - {{recipeIngredient.amount}} {{getMeasuringUnitName$(recipeIngredient.measuringUnitId) | async}}
       </li>
     </ul>
     <ol>
@@ -25,6 +26,9 @@
         <input type="checkbox" formControlName="active">
       </label>
 
+      <h3 class="text-accent text-xl">Bild</h3>
+      <input type="file" (change)="onFileSelected($event)">
+
       <h3 class="text-accent text-xl">Zutaten</h3>
       <ul [formArrayName]="'recipeIngredients'" class="p-3">
         <ng-container *ngFor="let recipeIngredient of formGroup.controls.recipeIngredients.controls; let i = index">
@@ -33,9 +37,13 @@
               <input type="number" formControlName="ingredientAmount" class="list-item-input list-item-input-amount">
             </label>
             <label>
-              <select formControlName="ingredientUnit" class="list-item-input list-item-input-unit">
-                <ng-container *ngFor="let ingredientUnit of Object.keys(MeasuringUnit)">
-                  <option [value]="ingredientUnit">{{getMeasuringUnitDisplayName(ingredientUnit)}}</option>
+              <select formControlName="ingredientUnitId" class="list-item-input list-item-input-unit">
+                <ng-container *ngIf="getAllPossibleMeasuringUnits() as measuringUnits">
+                  <option *ngFor="let measuringUnit of measuringUnits"
+                          [value]="measuringUnit.id"
+                  >
+                    {{ measuringUnit.name }}
+                  </option>
                 </ng-container>
               </select>
             </label>
@@ -53,7 +61,9 @@
             <button type="button" (click)="removeRecipeIngredient(i)" class="btn btn-xs">X</button>
           </li>
         </ng-container>
-        <button type="button" (click)="addRecipeIngredient()" class="btn btn-sm btn-accent mt-4 normal-case">Zutat hinzufügen</button>
+        <button type="button" (click)="addRecipeIngredient()" class="btn btn-sm btn-accent mt-4 normal-case">Zutat
+          hinzufügen
+        </button>
       </ul>
 
       <h3 class="text-accent text-xl">Schritte</h3>
@@ -74,7 +84,8 @@
             <button type="button" (click)="removeStep(i)" class="btn btn-xs">X</button>
           </li>
         </ng-container>
-        <button type="button" (click)="addStep()" class="btn btn-sm btn-accent mt-4 normal-case">Schritt hinzufügen</button>
+        <button type="button" (click)="addStep()" class="btn btn-sm btn-accent mt-4 normal-case">Schritt hinzufügen
+        </button>
       </ol>
 
       <p class="m-5">

@@ -1,8 +1,15 @@
 import { Injectable } from '@angular/core';
 
 import { IApiService, IngredientFilter, RecipeFilter } from './i-api-service';
-import { IFilter, Ingredient, MeasuringUnit, RecipeIngredient, RecipeStep } from 'dat-cocktails-types';
-import { Recipe } from '../shared/i-recipe';
+import {
+  IFilter,
+  Ingredient,
+  RecipeIngredient,
+  RecipeStep,
+  Recipe,
+  MeasuringUnit,
+  MeasuringUnitFilter
+} from 'dat-cocktails-types';
 import { HttpClient, HttpParams } from "@angular/common/http";
 import { catchError, delay, map, Observable, of, retry, Subject, switchMap, take, tap, throwError } from "rxjs";
 
@@ -12,6 +19,8 @@ import { catchError, delay, map, Observable, of, retry, Subject, switchMap, take
 export class ApiService implements IApiService {
 
   private readonly _baseUrl = 'http://localhost:8000';
+  // private readonly _baseUrl = 'http://192.168.178.29:8000'; // lan test
+
 
   private _cachedRecipesRequests = new Map<number, number[]>();
   private _cachedRecipes = new Map<number, Recipe>();
@@ -21,6 +30,10 @@ export class ApiService implements IApiService {
   private _cachedIngredientsRequests = new Map<number, number[]>();
   private _cachedIngredients = new Map<number, Ingredient>();
   private _pendingIngredientsRequests = new Set<number>;
+
+  private _cachedMeasuringUnitsRequests = new Map<number, number[]>();
+  private _cachedMeasuringUnits = new Map<number, MeasuringUnit>();
+  private _pendingMeasuringUnitRequests = new Set<number>;
 
   constructor(
     private _http: HttpClient
@@ -188,12 +201,19 @@ export class ApiService implements IApiService {
     );
   }
 
+  // save/ send as b64
+  // server saves it as file with unique id-file-name
+  // place file url in recipe
   updateRecipe(recipe: Recipe): boolean {
     if (!this._cachedRecipes.get(recipe.id)) {
       this._cachedRecipes.set(recipe.id, recipe);
       // this.recipesChanged$.next(null);
     }
-    this._http.put<Recipe[]>(this._baseUrl + '/recipe', recipe).subscribe();
+    this._http.put<Recipe[]>(this._baseUrl + '/recipe', recipe).pipe(
+      switchMap(() => {
+        return this._http.put<Recipe[]>(this._baseUrl + '/recipe', recipe);
+      })
+    ).subscribe();
     return false; // TODO: wait for result
   }
 
@@ -232,7 +252,7 @@ export class ApiService implements IApiService {
       active: false,
       recipeIngredients: [<RecipeIngredient>{
         ingredientId: -1,
-        measuringUnit: "", // Don't know why enum not working here.
+        measuringUnitId: -1,
         amount: 0
       }],
       steps: [<RecipeStep>{
@@ -394,5 +414,104 @@ export class ApiService implements IApiService {
 
   getRecipeChangedSubject(): Subject<null> {
     return this.recipesChanged$;
+  }
+
+  getCachedMeasuringUnitRequest$(filter: MeasuringUnitFilter): Observable<MeasuringUnit[] | undefined> {
+    const filterHash = this._hashCode(filter);
+    let foundMeasuringUnits: MeasuringUnit[] = [];
+    const hashResult = this._cachedMeasuringUnitsRequests.get(filterHash);
+    if (hashResult) {
+      hashResult.forEach(id => {
+        const cachedMeasuringUnit = this._cachedMeasuringUnits.get(id);
+        if (cachedMeasuringUnit) {
+          foundMeasuringUnits.push(cachedMeasuringUnit);
+        }
+      })
+    } else {
+      // Search in all cached results
+      Array.from(this._cachedMeasuringUnits.values()).filter(measuringUnit => {
+        if (
+          filter.id ? measuringUnit.id === filter.id : true
+          && filter.name ? measuringUnit.name === filter.name : true
+        ) {
+          if (!foundMeasuringUnits.find(toCheck => toCheck.id === measuringUnit.id)) {
+            foundMeasuringUnits.push(measuringUnit);
+          }
+        }
+      });
+    }
+    return of(foundMeasuringUnits.length === 0 ? undefined : foundMeasuringUnits);
+  }
+
+   private _cacheMeasureUnitsRequest(filter: MeasuringUnitFilter, result: MeasuringUnit[]): void {
+    const filterHash = this._hashCode(filter);
+    const measuringUnitIds: number[] = [];
+    result.forEach(measuringUnit => {
+      this._cachedMeasuringUnits.set(measuringUnit.id, measuringUnit);
+      measuringUnitIds.push(measuringUnit.id);
+    })
+    this._cachedMeasuringUnitsRequests.set(filterHash, measuringUnitIds);
+  }
+
+  getMeasuringUnits$(filter: MeasuringUnitFilter): Observable<MeasuringUnit[]> {
+    if (Object.keys(filter).length === 0) {
+      return of([]);
+    } else if (filter.id === -1) {
+      filter = {};
+    }
+
+     const filterHash = this._hashCode(filter);
+
+    return this.getCachedMeasuringUnitRequest$(filter).pipe(
+      switchMap(res => {
+        if (res) {
+          return of(res);
+        }
+        if (this._pendingMeasuringUnitRequests.has(filterHash)) {
+          return of(true).pipe(
+            delay(100),
+            map(() => {
+              if (this._pendingMeasuringUnitRequests.has(filterHash)) {
+                throw new Error("Still pending request");
+              }
+            }),
+            retry(100),
+            take(1),
+            switchMap(() => this.getCachedMeasuringUnitRequest$(filter)),
+            map(res => res ?? [])
+          );
+        }
+        this._pendingMeasuringUnitRequests.add(filterHash);
+        return this._http.post<MeasuringUnit[]>(this._baseUrl + '/measuringUnits', filter).pipe(
+          tap(res => {
+            if (res.length !== 0) {
+              this._cacheMeasureUnitsRequest(filter, res);
+            }
+            this._pendingMeasuringUnitRequests.delete(filterHash);
+          }),
+          catchError(error => {
+            console.error('Error fetching measuringUnits from server: ', error);
+            this._pendingMeasuringUnitRequests.delete(filterHash);
+            return throwError(error);
+          })
+        );
+      }),
+    );
+  }
+
+  getAllMeasuringUnits$(): Observable<MeasuringUnit[]> {
+    return this.getMeasuringUnits$({id: -1});
+  }
+
+  // private handleFirstFilterInput<T extends IFilter>(): Observable<T> {
+  //   if (Object.keys(filter).length === 0) {
+  //     return of([]);
+  //   } else if (filter.id === -1) {
+  //     filter = {};
+  //   }
+  // }
+
+  getBasePictureUrl(): string {
+    return `${this._baseUrl}/pictures`;
   }
 }

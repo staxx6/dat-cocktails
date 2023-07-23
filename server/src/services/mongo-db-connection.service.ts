@@ -1,4 +1,12 @@
-import {IDbConnection, IFilter, Ingredient, IngredientFilter, Recipe, RecipeFilter} from 'dat-cocktails-types';
+import {
+    IDbConnection,
+    IFilter,
+    Ingredient,
+    IngredientFilter, MeasuringUnit,
+    MeasuringUnitFilter,
+    Recipe,
+    RecipeFilter
+} from 'dat-cocktails-types';
 import { Collection, Db, MongoClient, WithId } from "mongodb";
 
 export class MongoDbConnectionService implements IDbConnection {
@@ -9,6 +17,7 @@ export class MongoDbConnectionService implements IDbConnection {
     private readonly _dbName = 'dat-cocktails'; // -test
     private readonly _ingredientsCollectionName = 'ingredients';
     private readonly _recipesCollectionName = 'recipes';
+    private readonly _measureUnitsCollectionName = 'measuring-units';
 
     private _dataBase: Db | undefined;
 
@@ -35,6 +44,15 @@ export class MongoDbConnectionService implements IDbConnection {
             this._recipesCollection = this.getDb().collection<Recipe>(this._recipesCollectionName);
         }
         return this._recipesCollection;
+    }
+
+    private _measuringUnitCollection: Collection<MeasuringUnit> | undefined;
+
+    private getMeasuringUnitCollection(): Collection<MeasuringUnit> {
+        if (!this._measuringUnitCollection) {
+            this._measuringUnitCollection = this.getDb().collection<MeasuringUnit>(this._measureUnitsCollectionName);
+        }
+        return this._measuringUnitCollection;
     }
 
     constructor() {
@@ -108,5 +126,10 @@ export class MongoDbConnectionService implements IDbConnection {
         await this._getRecipesCollection().deleteOne({id: id});
         console.log(`Deleted recipe with id: ${id}`);
         return true;
+    }
+
+    async getMeasuringUnits(filter: MeasuringUnitFilter): Promise<MeasuringUnit[]> {
+        const cursor = await this.getMeasuringUnitCollection().find(filter);
+        return await cursor.toArray();
     }
 }

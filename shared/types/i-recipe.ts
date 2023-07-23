@@ -1,29 +1,33 @@
 import { Ingredient } from "./i-ingredient";
 
-export enum MeasuringUnit {
-    cl = "cl",
-    ml = "ml",
-    oz = "oz",
-    g = "g",
-    kg = "kg",
-    BL = "BL",
-    tl = "tl", // Teelöffel
-    gtl = "gtl", // gestrichener Teelöffel
-    drop = "drop", // Für Bitters
-    none = ""
-}
+// export enum MeasuringUnit {
+//     cl = "cl",
+//     ml = "ml",
+//     oz = "oz",
+//     g = "g",
+//     kg = "kg",
+//     BL = "BL",
+//     tl = "tl", // Teelöffel
+//     gtl = "gtl", // gestrichener Teelöffel
+//     drop = "drop", // Für Bitters
+//     piece = "Stück",
+//     none = ""
+// }
 
 export interface RecipeStep {
     orderNumber: number
     text: string,
-    picture?: string
+    picture?: string,
+    pictureB64?: string,
+    pictureUrl?: string,
 }
 
 export interface Recipe {
     id: number,
     name: string,
     active: boolean,
-    picture?: string,
+    pictureB64?: string,
+    pictureFileIdWithExt?: string,
     recipeIngredients: RecipeIngredient[],
     garnishes?: Ingredient[],
     steps: RecipeStep[],
@@ -36,6 +40,6 @@ export interface Recipe {
 export interface RecipeIngredient {
     // recipe: Recipe,
     ingredientId: number,
-    measuringUnit: MeasuringUnit,
+    measuringUnitId: number,
     amount: number
 }
