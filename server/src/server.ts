@@ -4,6 +4,7 @@ import { IDbConnection, IngredientFilter, MeasuringUnitFilter, Recipe, RecipeFil
 import { v4 as uuidv4 } from 'uuid';
 import path from "path";
 import * as fs from "fs";
+import sharp from 'sharp';
 
 const app = express();
 const port = 8000;
@@ -26,9 +27,9 @@ const dbConnection: IDbConnection = new MongoDbConnectionService();
 await dbConnection.connect();
 
 app.get('/pictures/:imageName', async (req: Request, res: Response) => {
-  const imageName = req.params['imageName'];
-  res.contentType('image/jpg');
-  res.sendFile(`${cocktailPictureFolder}\\${imageName}`);
+    const imageName = req.params['imageName'];
+    res.contentType('image/jpg');
+    res.sendFile(`${cocktailPictureFolder}\\${imageName}`);
 });
 
 // TODO: use ingredients with empty filter
@@ -94,9 +95,23 @@ app.put('/recipe', async (req: Request, res: Response) => {
 
         const pictureFilePath = path.join(cocktailPictureFolder, pictureFileName);
         const pictureData = pictureB64.replace(/^data:image\/jpeg;base64,/, '');
-		fs.writeFileSync(pictureFilePath, pictureData, 'base64');
+        const pictureBuffer = Buffer.from(pictureData, 'base64');
 
-	    recipe.pictureFileIdWithExt = `${pictureFileName}`;
+        sharp(pictureBuffer)
+            .resize(1000, 1000, {
+                fit: 'inside', // Maintain aspect ratio and ensure the image fits within the specified dimensions
+                withoutEnlargement: true, // Prevent upscaling if the image is smaller than the specified dimensions
+            })
+            .toFile(pictureFilePath, (err, info) => {
+                if (err) {
+                    console.error('Error resizing and saving the image:', err);
+                } else {
+                    console.log('Image resized and saved successfully:', info);
+                }
+            });
+        // fs.writeFileSync(pictureFilePath, pictureData, 'base64');
+
+        recipe.pictureFileIdWithExt = `${pictureFileName}`;
     }
 
     const result = await dbConnection.updateRecipe(req.body as Recipe); // what with empty?

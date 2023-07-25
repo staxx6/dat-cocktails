@@ -1,19 +1,20 @@
-<div *ngIf="recipe" class="card card-side bg-base-100 shadow-xl m-5">
+<a *ngIf="recipe"
+   [routerLink]="['cocktail', recipe.id]"
+   class="card card-side bg-base-300 shadow-md m-5 hover:scale-110 transition duration-150"
+>
   <figure>
     <img *ngIf="recipe.pictureFileIdWithExt"
          [src]="getRecipePicture()"
          alt="Cover"
-         class="w-20"
+         class="w-28 object-cover h-full"
     />
   </figure>
   <div class="card-body p-4">
-    <a [routerLink]="['cocktail', recipe.id]" class="card-title">
-      <h2 class="">{{ recipe.name }}</h2>
-    </a>
+    <h2 class="card-title text-accent">{{ recipe.name }}</h2>
     <ul *ngIf="!isBartenderUser" class="">
       <li *ngFor="let ingredient of recipe.recipeIngredients" class="">
         {{getIngredientName$(ingredient) | async}}
       </li>
     </ul>
   </div>
-</div>
+</a>

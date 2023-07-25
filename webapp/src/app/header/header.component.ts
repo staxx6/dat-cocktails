@@ -7,8 +7,8 @@ import { RouterLink } from "@angular/router";
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-      <div class="bg-base-300/80 flex flex-auto">
-          <nav class="navbar bg-base-100 rounded-2xl flex flex-auto flex-wrap m-2 pb-2.5 pl-3">
+      <div class="flex flex-auto">
+          <nav class="navbar bg-base-300 rounded-2xl flex flex-auto flex-wrap m-2 pb-2.5 pl-3">
               <a [routerLink]="['']"
                  class="btn btn-ghost normal-case text-xl mr-2 text-gray-50"
               >

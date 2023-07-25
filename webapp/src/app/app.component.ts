@@ -1,7 +1,6 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterOutlet } from '@angular/router';
-import { IApiService } from './services/i-api-service';
 import { RecipeCardUserComponent } from './recipe-card-user/recipe-card-user.component';
 import { HeaderComponent } from "./header/header.component";
 
@@ -10,7 +9,7 @@ import { HeaderComponent } from "./header/header.component";
   standalone: true,
   imports: [CommonModule, RouterOutlet, RecipeCardUserComponent, HeaderComponent],
   template: `
-    <div class="flex flex-col">
+    <div class="flex flex-col "> <!-- bg-base-300 -->
       <dc-header/>
       <main>
           <router-outlet></router-outlet>

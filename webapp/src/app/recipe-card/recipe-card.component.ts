@@ -89,4 +89,8 @@ export class RecipeCardComponent {
   // getDCName$(measuringUnit: MeasuringUnit): Observable<string> {
   //   return this._apiService.get
   // }
+
+  getRecipePicture(): string {
+    return `${this._apiService.getBasePictureUrl()}/${this.recipe?.pictureFileIdWithExt}`;
+  }
 }

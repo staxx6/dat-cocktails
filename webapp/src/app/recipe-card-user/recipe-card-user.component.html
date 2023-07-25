@@ -1,9 +1,0 @@
-<div class="">
-  <h2>{{recipe?.name ?? 'Loading ...'}}</h2>
-  <ul>
-    <li *ngFor="let ingredient of recipe?.recipeIngredients" class="ingredient">
-      {{getIngredientName$(ingredient) | async}}
-    </li>
-  </ul>
-  <a class="return-btn" routerLink="../..">Zurück</a>
-</div>

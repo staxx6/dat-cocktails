@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "watch-server": "cd ./server && npm run dev",
-    "watch-webapp": "cd ./webapp && npx ng serve",
+    "watch-webapp": "cd ./webapp && npx ng serve --host 0.0.0.0",
     "dev": "npx concurrently 'npm:watch-*'",
     "install-all": "cd ./server && npm install && cd ./../webapp && npm i"
   },

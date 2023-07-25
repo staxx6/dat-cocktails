@@ -278,8 +278,4 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
       // this._selectedFile = input.files[0];
     }
   }
-
-  getRecipePicture(): string {
-    return `${this._apiService.getBasePictureUrl()}/${this.recipe?.pictureFileIdWithExt}`;
-  }
 }

@@ -18,8 +18,8 @@ import { catchError, delay, map, Observable, of, retry, Subject, switchMap, take
 })
 export class ApiService implements IApiService {
 
-  private readonly _baseUrl = 'http://localhost:8000';
-  // private readonly _baseUrl = 'http://192.168.178.29:8000'; // lan test
+  // private readonly _baseUrl = 'http://localhost:8000';
+  private readonly _baseUrl = 'http://192.168.178.29:8000'; // LAN test
 
 
   private _cachedRecipesRequests = new Map<number, number[]>();
@@ -209,11 +209,7 @@ export class ApiService implements IApiService {
       this._cachedRecipes.set(recipe.id, recipe);
       // this.recipesChanged$.next(null);
     }
-    this._http.put<Recipe[]>(this._baseUrl + '/recipe', recipe).pipe(
-      switchMap(() => {
-        return this._http.put<Recipe[]>(this._baseUrl + '/recipe', recipe);
-      })
-    ).subscribe();
+    this._http.put<Recipe[]>(this._baseUrl + '/recipe', recipe).subscribe();
     return false; // TODO: wait for result
   }
 
