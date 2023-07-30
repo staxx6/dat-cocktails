@@ -100,7 +100,7 @@ app.put('/recipe', async (req: Request, res: Response) => {
         sharp(pictureBuffer)
             .resize(1000, 1000, {
                 fit: 'inside', // Maintain aspect ratio and ensure the image fits within the specified dimensions
-                withoutEnlargement: true, // Prevent upscaling if the image is smaller than the specified dimensions
+                withoutEnlargement: true, // Prevent up-scaling if the image is smaller than the specified dimensions
             })
             .toFile(pictureFilePath, (err, info) => {
                 if (err) {

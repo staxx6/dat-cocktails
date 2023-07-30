@@ -7,7 +7,13 @@ import { RouterLink } from "@angular/router";
   selector: 'dc-ingredients-list-item',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './ingredients-list-item.component.html',
+  template: `
+    <div *ngIf="ingredient" class="list-item">
+      <a [routerLink]="['/ingredient', ingredient.id]" class="list-item-header-link">
+        <h2 class="list-item-header-text">{{ ingredient.name }}</h2>
+      </a>
+    </div>
+  `,
   styleUrls: ['./ingredients-list-item.component.scss']
 })
 export class IngredientsListItemComponent {

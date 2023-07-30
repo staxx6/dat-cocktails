@@ -9,7 +9,29 @@ import { catchError, map, Observable, tap, throwError } from "rxjs";
   selector: 'recipe-list-item',
   standalone: true,
   imports: [CommonModule, RouterLink],
-  templateUrl: './recipe-list-item.component.html',
+  template: `
+    <a *ngIf="recipe"
+       [routerLink]="['cocktail', recipe.id]"
+       class="card card-side bg-base-300 shadow-md m-5 hover:scale-110 transition duration-150"
+    >
+      <figure>
+        <img *ngIf="recipe.pictureFileIdWithExt"
+             [src]="getRecipePicture()"
+             alt="Cover"
+             class="w-28 object-cover h-full"
+        />
+      </figure>
+      <div class="card-body p-4">
+        <h2 class="card-title text-accent">{{ recipe.name }}</h2>
+        <ul *ngIf="!isBartenderUser" class="">
+          <li *ngFor="let ingredient of recipe.recipeIngredients" class="">
+            {{getIngredientName$(ingredient) | async}}
+          </li>
+        </ul>
+      </div>
+    </a>
+
+  `,
   styleUrls: ['./recipe-list-item.component.scss']
 })
 export class RecipeListItemComponent implements OnDestroy, OnInit {
