@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import { FormArray,
   FormControl,
@@ -71,12 +71,15 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
   constructor(
     apiService: IApiService,
     route: ActivatedRoute,
+    router: Router,
+    location: Location,
     private _formBuilder: NonNullableFormBuilder,
-    private _router: Router
   ) {
     super(
       apiService,
-      route
+      route,
+      router,
+      location
     );
 
     this.recipeChanged.subscribe(recipe => {

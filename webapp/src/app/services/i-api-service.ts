@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { IFilter, Recipe, Ingredient, MeasuringUnit, MeasuringUnitFilter } from 'dat-cocktails-types';
 import { Observable, Subject } from "rxjs";
 
-
 export interface RecipeFilter extends IFilter {
 }
 

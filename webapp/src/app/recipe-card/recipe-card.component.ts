@@ -1,8 +1,9 @@
 import { Directive } from '@angular/core';
 import { IApiService, IngredientFilter } from "../services/i-api-service";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { BehaviorSubject, distinctUntilChanged, map, Observable, of, Subject, switchMap, take, tap } from "rxjs";
-import { MeasuringUnit, Recipe, RecipeIngredient } from 'dat-cocktails-types';
+import { Ingredient, MeasuringUnit, Recipe, RecipeIngredient } from 'dat-cocktails-types';
+import { Location } from "@angular/common";
 
 @Directive({
   selector: "recipe-card",
@@ -25,7 +26,9 @@ export class RecipeCardComponent {
 
   constructor(
     protected _apiService: IApiService,
-    protected _route: ActivatedRoute
+    protected _route: ActivatedRoute,
+    protected _router: Router,
+    protected _location: Location
   ) {
     const recipeId = _route.snapshot.paramMap.get('id')!;
     _apiService.getRecipes$({id: parseInt(recipeId)}).pipe(
@@ -90,7 +93,14 @@ export class RecipeCardComponent {
   //   return this._apiService.get
   // }
 
-  getRecipePicture(): string {
-    return `${this._apiService.getBasePictureUrl()}/${this.recipe?.pictureFileIdWithExt}`;
+  getRecipePicture(): string | undefined {
+    if (this.recipe?.pictureFileIdWithExt) {
+      return `${this._apiService.getBasePictureUrl()}/${this.recipe?.pictureFileIdWithExt}`;
+    }
+    return undefined;
+  }
+
+  moveToIngredientId(ingredientId: number): void {
+    this._router.navigate(['ingredient', ingredientId])
   }
 }

@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { CommonModule, Location } from '@angular/common';
 import { BehaviorSubject, take, tap } from "rxjs";
 import { IApiService } from "../services/i-api-service";
 import { ActivatedRoute } from "@angular/router";
@@ -29,7 +29,8 @@ export class IngredientCardComponent {
 
   constructor(
     protected _apiService: IApiService,
-    protected _route: ActivatedRoute
+    protected _route: ActivatedRoute,
+    protected _location: Location
   ) {
     const ingredientId = _route.snapshot.paramMap.get('id')!;
     if (!ingredientId) {
@@ -56,5 +57,9 @@ export class IngredientCardComponent {
 
   getDescription(): string {
     return this.ingredient?.description ?? 'Sorry, keine Beschreibung vorhanden.';
+  }
+
+  goSiteBack(): void {
+    this._location.back();
   }
 }

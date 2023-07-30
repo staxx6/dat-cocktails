@@ -21,13 +21,13 @@ export class RecipesListComponent implements OnInit {
 
   constructor(
     private _apiService: IApiService,
-    private _router: Router
+    private router: Router
   ) {
     this.recipes$ = this._apiService.getAllRecipes$().pipe(
       switchMap(() => this.loadAllCachedRecipes())
     );
 
-    this.isBartenderUser = _router.url.includes('bartender');
+    this.isBartenderUser = router.url.includes('bartender');
 
     _apiService.getRecipeChangedSubject().pipe(
       // This won't work cus loadAllRecipes is saved in cache with the origin stuff
