@@ -8,11 +8,17 @@ import { RouterLink } from "@angular/router";
   standalone: true,
   imports: [CommonModule, RouterLink],
   template: `
-    <div *ngIf="ingredient" class="list-item">
-      <a [routerLink]="['/ingredient', ingredient.id]" class="list-item-header-link">
-        <h2 class="list-item-header-text">{{ ingredient.name }}</h2>
-      </a>
-    </div>
+    <!-- FIXME: routerLink could be done better -->
+    <a *ngIf="ingredient" 
+         class="card card-side bg-base-300 shadow-md m-2 hover:scale-110 transition duration-150"
+         [routerLink]="isBartenderUser ? ['../ingredient', ingredient.id] : ['/ingredient', ingredient.id]"
+    >
+      <div class="card-body p-3">
+        <h2 class="card-title text-accent">
+          {{ ingredient.name }}
+        </h2>
+      </div>
+    </a>
   `,
   styleUrls: ['./ingredients-list-item.component.scss']
 })

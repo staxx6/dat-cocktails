@@ -10,7 +10,29 @@ import { map, Observable, of, switchMap, take, tap } from "rxjs";
   selector: 'recipes-list',
   standalone: true,
   imports: [CommonModule, RecipeListItemComponent],
-  templateUrl: './recipes-list.component.html',
+  template: `
+    <ul class="cocktails-list p-2">
+      <ng-container *ngIf="(recipes$ | async) as recipes">
+        <ng-container *ngFor="let recipe of recipes">
+          <!-- TODO: This generates unused HTML isBartenderUser? -->
+          <ng-container *ngIf="isBartenderUser ? true : recipe.active">
+            <li>
+              <recipe-list-item
+                [recipe]="recipe"
+                [isBartenderUser]="isBartenderUser"
+              >
+              </recipe-list-item>
+            </li>
+          </ng-container>
+        </ng-container>
+        <li *ngIf="!recipes.length">No cocktails available.</li>
+      </ng-container>
+    </ul>
+    <ng-container *ngIf="isBartenderUser">
+      <button type="button" (click)="addRecipe()" class="btn m-3 btn-info">Rezept hinzufügen</button>
+    </ng-container>
+
+  `,
   styleUrls: ['./recipes-list.component.scss']
 })
 export class RecipesListComponent implements OnInit {

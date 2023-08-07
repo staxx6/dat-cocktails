@@ -34,7 +34,108 @@ export interface IFormGroupModel {
     RouterLink,
     ReactiveFormsModule
   ],
-  templateUrl: './recipe-card-bartender.component.html',
+  template: `
+    <div class="bg-base-100 rounded p-3">
+      <ng-container *ngIf="recipe">
+        <h2>{{recipe.name}}</h2>
+        <img [src]="getRecipePicture()" class="w-36"/>
+        Aktiv? {{recipe.active ? "✔" : "❌"}}
+        <ul>
+          <li *ngFor="let recipeIngredient of recipe.recipeIngredients" class="ingredient">
+            <!--    <input type="text">-->
+            {{getIngredientName$(recipeIngredient) | async}}
+            - {{recipeIngredient.amount}} {{getMeasuringUnitName$(recipeIngredient.measuringUnitId) | async}}
+          </li>
+        </ul>
+        <ol>
+          <li *ngFor="let step of recipe.steps" class="step">
+            <span class="step-text">{{step.text}}</span>
+          </li>
+        </ol>
+
+        <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
+          <label>
+            Name:
+            <input type="text" formControlName="name" class="list-item-name">
+          </label>
+          <label>
+            Active:
+            <input type="checkbox" formControlName="active">
+          </label>
+
+          <h3 class="text-accent text-xl">Bild</h3>
+          <input type="file" (change)="onFileSelected($event)">
+
+          <h3 class="text-accent text-xl">Zutaten</h3>
+          <ul [formArrayName]="'recipeIngredients'" class="p-3">
+            <ng-container *ngFor="let recipeIngredient of formGroup.controls.recipeIngredients.controls; let i = index">
+              <li [formGroupName]="i" class="list-item">
+                <label>
+                  <input type="number" formControlName="ingredientAmount"
+                         class="list-item-input list-item-input-amount">
+                </label>
+                <label>
+                  <select formControlName="ingredientUnitId" class="list-item-input list-item-input-unit">
+                    <ng-container *ngIf="getAllPossibleMeasuringUnits() as measuringUnits">
+                      <option *ngFor="let measuringUnit of measuringUnits"
+                              [value]="measuringUnit.id"
+                      >
+                        {{ measuringUnit.name }}
+                      </option>
+                    </ng-container>
+                  </select>
+                </label>
+                <label>
+                  <select formControlName="ingredientId" class="list-item-input list-item-input-ingredient">
+                    <ng-container *ngIf="getAllPossibleIngredients() as ingredients">
+                      <option *ngFor="let ingredient of ingredients"
+                              [value]="ingredient.id"
+                      >
+                        {{ ingredient.name }}
+                      </option>
+                    </ng-container>
+                  </select>
+                </label>
+                <button type="button" (click)="removeRecipeIngredient(i)" class="btn btn-xs">X</button>
+              </li>
+            </ng-container>
+            <button type="button" (click)="addRecipeIngredient()" class="btn btn-sm btn-accent mt-4 normal-case">Zutat
+              hinzufügen
+            </button>
+          </ul>
+
+          <h3 class="text-accent text-xl">Schritte</h3>
+          <ol [formArrayName]="'steps'" class="p-3">
+            <ng-container *ngFor="let steps of formGroup.controls.steps.controls; let i = index">
+              <li [formGroupName]="i" class="list-item">
+                <label>
+                  {{i}}.
+                </label>
+                <label>
+                  <!-- Text: -->
+                  <textarea type="text" formControlName="text" class="list-item-step-text" rows="3"></textarea>
+                </label>
+                <!-- <label>
+                  Bild:
+                  <img src="" alt="">
+                </label> -->
+                <button type="button" (click)="removeStep(i)" class="btn btn-xs">X</button>
+              </li>
+            </ng-container>
+            <button type="button" (click)="addStep()" class="btn btn-sm btn-accent mt-4 normal-case">Schritt hinzufügen
+            </button>
+          </ol>
+
+          <p class="m-5">
+            <button type="submit" class="btn btn-primary mr-3">Speichern</button>
+            <button type="button" (click)="deleteRecipe()" class="btn">Rezept löschen</button>
+          </p>
+        </form>
+      </ng-container>
+
+      <a class="return-btn" routerLink="../..">Zurück</a>
+    </div>
+  `,
   styleUrls: ['./recipe-card-bartender.component.scss']
 })
 export class RecipeCardBartenderComponent extends RecipeCardComponent implements OnInit {

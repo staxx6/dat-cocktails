@@ -7,7 +7,7 @@ import { BackButtonDirective } from "../directives/back-button.directive";
 @Component({
   selector: 'dc-ingredient-card-user',
   standalone: true,
-	imports: [CommonModule, RouterLink, BackButtonDirective],
+  imports: [CommonModule, RouterLink, BackButtonDirective],
   template: `
     <div class="flex flex-wrap mt-4 bg-base-300 rounded-2xl w-full">
       <figure *ngIf="getIngredientPicture()" class="w-48"><img [src]="getIngredientPicture()"/></figure>

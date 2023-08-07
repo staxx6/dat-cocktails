@@ -1,6 +1,6 @@
-import { Injectable } from '@angular/core';
+import {Injectable} from '@angular/core';
 
-import { IApiService, IngredientFilter, RecipeFilter } from './i-api-service';
+import {IApiService, IngredientFilter, RecipeFilter} from './i-api-service';
 import {
   IFilter,
   Ingredient,
@@ -10,8 +10,8 @@ import {
   MeasuringUnit,
   MeasuringUnitFilter
 } from 'dat-cocktails-types';
-import { HttpClient, HttpParams } from "@angular/common/http";
-import { catchError, delay, map, Observable, of, retry, Subject, switchMap, take, tap, throwError } from "rxjs";
+import {HttpClient, HttpParams} from "@angular/common/http";
+import {catchError, delay, map, Observable, of, retry, Subject, switchMap, take, tap, throwError} from "rxjs";
 
 @Injectable({
   providedIn: 'root'
@@ -30,6 +30,7 @@ export class ApiService implements IApiService {
   private _cachedIngredientsRequests = new Map<number, number[]>();
   private _cachedIngredients = new Map<number, Ingredient>();
   private _pendingIngredientsRequests = new Set<number>;
+  ingredientsChanged$ = new Subject<null>();
 
   private _cachedMeasuringUnitsRequests = new Map<number, number[]>();
   private _cachedMeasuringUnits = new Map<number, MeasuringUnit>();
@@ -102,6 +103,10 @@ export class ApiService implements IApiService {
 
   getAllCachedRecipes$(): Observable<Recipe[]> {
     return of(Array.from(this._cachedRecipes.values()));
+  }
+
+  getAllCachedIngredients$(): Observable<Ingredient[]> {
+    return of(Array.from(this._cachedIngredients.values()));
   }
 
   // private cacheRecipesRequest(filter: IngredientFilter, result: Recipe[]): void {
@@ -232,7 +237,7 @@ export class ApiService implements IApiService {
   deleteRecipe(recipe: Recipe): Observable<boolean> {
     if (recipe.id !== -2) { // New, not DB saved recipe
       const httpParams = new HttpParams().set('id', recipe.id);
-      return this._http.delete(this._baseUrl + '/recipe', { params: httpParams}).pipe(
+      return this._http.delete(this._baseUrl + '/recipe', {params: httpParams}).pipe(
         tap(() => this._cachedRecipes.delete(recipe.id)),
         map(() => true)
       );
@@ -260,6 +265,20 @@ export class ApiService implements IApiService {
       // this.clearCacheRecipes();
       this._cachedRecipes.set(newRecipe.id, newRecipe);
       this.recipesChanged$.next(null);
+    }
+    // this._http.post<boolean>(this._baseUrl + '/recipe', newRecipe).subscribe();
+  }
+
+  newIngredientDummy(name: string) {
+    const newIngredient = <Ingredient>{
+      id: -2,
+      name: name,
+      description: ''
+    }
+    if (!this._cachedIngredients.get(newIngredient.id)) {
+      // this.clearCacheRecipes();
+      this._cachedIngredients.set(newIngredient.id, newIngredient);
+      this.ingredientsChanged$.next(null);
     }
     // this._http.post<boolean>(this._baseUrl + '/recipe', newRecipe).subscribe();
   }
@@ -340,6 +359,43 @@ export class ApiService implements IApiService {
     this._cachedIngredientsRequests.set(filterHash, ingredientIds);
   }
 
+  updateIngredient(ingredient: Ingredient): boolean {
+    if (!this._cachedIngredients.get(ingredient.id)) {
+      this._cachedIngredients.set(ingredient.id, ingredient);
+      // this.recipesChanged$.next(null);
+    }
+    this._http.put<Ingredient[]>(this._baseUrl + '/ingredient', ingredient).subscribe();
+    return false; // TODO: wait for result
+  }
+
+  createIngredient(ingredient: Ingredient): boolean {
+    if (!this._cachedIngredients.get(ingredient.id)) {
+      this._cachedIngredients.set(ingredient.id, ingredient);
+      // this.ingredientsChanged$.next(null);
+    }
+    this._http.post(this._baseUrl + '/ingredient', ingredient).pipe(
+      tap((res: any) => {
+        const newId = res['id'];
+        this._cachedIngredients.delete(ingredient.id);
+        ingredient.id = newId;
+        this._cachedIngredients.set(newId, ingredient);
+      })
+    ).subscribe();
+    return true; // TODO
+  }
+
+  deleteIngredient(ingredient: Ingredient): Observable<boolean> {
+    if (ingredient.id !== -2) { // New, not DB saved ingredient
+      const httpParams = new HttpParams().set('id', ingredient.id);
+      return this._http.delete(this._baseUrl + '/ingredient', {params: httpParams}).pipe(
+        tap(() => this._cachedIngredients.delete(ingredient.id)),
+        map(() => true)
+      );
+    }
+    this._cachedIngredients.delete(ingredient.id);
+    return of(true); // TODO:
+  }
+
   createBundledRequestFilter<K extends IFilter>(filters: K[]): object {
     return filters.reduce((result: any, currentFilter) => {
       for (const [key, value] of Object.entries(currentFilter)) {
@@ -412,6 +468,10 @@ export class ApiService implements IApiService {
     return this.recipesChanged$;
   }
 
+  getIngredientChangedSubject(): Subject<null> {
+    return this.ingredientsChanged$;
+  }
+
   getCachedMeasuringUnitRequest$(filter: MeasuringUnitFilter): Observable<MeasuringUnit[] | undefined> {
     const filterHash = this._hashCode(filter);
     let foundMeasuringUnits: MeasuringUnit[] = [];
@@ -439,7 +499,7 @@ export class ApiService implements IApiService {
     return of(foundMeasuringUnits.length === 0 ? undefined : foundMeasuringUnits);
   }
 
-   private _cacheMeasureUnitsRequest(filter: MeasuringUnitFilter, result: MeasuringUnit[]): void {
+  private _cacheMeasureUnitsRequest(filter: MeasuringUnitFilter, result: MeasuringUnit[]): void {
     const filterHash = this._hashCode(filter);
     const measuringUnitIds: number[] = [];
     result.forEach(measuringUnit => {
@@ -456,7 +516,7 @@ export class ApiService implements IApiService {
       filter = {};
     }
 
-     const filterHash = this._hashCode(filter);
+    const filterHash = this._hashCode(filter);
 
     return this.getCachedMeasuringUnitRequest$(filter).pipe(
       switchMap(res => {
