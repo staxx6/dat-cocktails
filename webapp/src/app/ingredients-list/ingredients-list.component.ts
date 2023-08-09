@@ -11,6 +11,9 @@ import {map, Observable, of, switchMap, take, tap} from "rxjs";
   standalone: true,
   imports: [CommonModule, IngredientsListItemComponent],
   template: `
+    <ng-container *ngIf="isBartenderUser">
+      <button type="button" (click)="addIngredient()" class="btn m-3 btn-info">Zutat hinzufügen</button>
+    </ng-container>
     <ul class="list">
       <ng-container *ngIf="(ingredients$ | async) as ingredients">
         <ng-container *ngIf="isBartenderUser ? true : true"> <!-- ingredient.active ist auch noch falsche stelle! -->
@@ -25,9 +28,6 @@ import {map, Observable, of, switchMap, take, tap} from "rxjs";
         <li *ngIf="!ingredients.length">No cocktails available.</li>
       </ng-container>
     </ul>
-    <ng-container *ngIf="isBartenderUser">
-      <button type="button" (click)="addIngredient()" class="btn m-3 btn-info">Zutat hinzufügen</button>
-    </ng-container>
   `,
   styleUrls: ['./ingredients-list.component.scss']
 })
@@ -58,6 +58,7 @@ export class IngredientsListComponent {
   }
 
   addIngredient() {
-    this._apiService.newIngredientDummy('Dein neue Zutat');
+    this._apiService.newIngredientDummy('Deine neue Zutat');
+    this._router.navigate(['/bartender', 'ingredient', -2]);
   }
 }
