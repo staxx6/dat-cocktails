@@ -11,6 +11,9 @@ import { map, Observable, of, switchMap, take, tap } from "rxjs";
   standalone: true,
   imports: [CommonModule, RecipeListItemComponent],
   template: `
+    <ng-container *ngIf="isBartenderUser">
+      <button type="button" (click)="addRecipe()" class="btn m-3 btn-info">Rezept hinzufügen</button>
+    </ng-container>
     <ul class="cocktails-list p-2">
       <ng-container *ngIf="(recipes$ | async) as recipes">
         <ng-container *ngFor="let recipe of recipes">
@@ -28,9 +31,6 @@ import { map, Observable, of, switchMap, take, tap } from "rxjs";
         <li *ngIf="!recipes.length">No cocktails available.</li>
       </ng-container>
     </ul>
-    <ng-container *ngIf="isBartenderUser">
-      <button type="button" (click)="addRecipe()" class="btn m-3 btn-info">Rezept hinzufügen</button>
-    </ng-container>
 
   `,
   styleUrls: ['./recipes-list.component.scss']
@@ -43,13 +43,13 @@ export class RecipesListComponent implements OnInit {
 
   constructor(
     private _apiService: IApiService,
-    private router: Router
+    private _router: Router
   ) {
     this.recipes$ = this._apiService.getAllRecipes$().pipe(
       switchMap(() => this.loadAllCachedRecipes())
     );
 
-    this.isBartenderUser = router.url.includes('bartender');
+    this.isBartenderUser = _router.url.includes('bartender');
 
     _apiService.getRecipeChangedSubject().pipe(
       // This won't work cus loadAllRecipes is saved in cache with the origin stuff
@@ -105,5 +105,6 @@ export class RecipesListComponent implements OnInit {
 
   addRecipe() {
     this._apiService.newRecipeDummy('Dein neues Rezept');
+    this._router.navigate(['/bartender', 'cocktail', -2]);
   }
 }

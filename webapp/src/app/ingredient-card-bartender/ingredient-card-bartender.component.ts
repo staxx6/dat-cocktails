@@ -15,7 +15,9 @@ import {switchMap} from "rxjs";
     <div class="bg-base-100 rounded p-3">
       <ng-container *ngIf="ingredient">
         <h2 class="text-accent">{{ingredient.name}}</h2>
-        <!-- <img [src]="getRecipePicture()" class="w-36"/> -->
+        <figure *ngIf="getIngredientPicture()">
+          <img [src]="getIngredientPicture()" class="w-36"/>
+        </figure>
         <p>
           {{getDescription()}}
         </p>

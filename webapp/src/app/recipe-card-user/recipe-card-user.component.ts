@@ -13,8 +13,10 @@ import { RecipeCardComponent } from "../recipe-card/recipe-card.component";
     RecipeCardComponent
   ],
   template: `
-    <div class="flex flex-wrap mt-4 bg-base-300 rounded-2xl w-full">
-      <figure class="w-48" *ngIf="getRecipePicture()"><img [src]="getRecipePicture()"/></figure>
+    <div class="flex flex-wrap mt-4 bg-base-300 rounded-2xl w-full overflow-hidden">
+      <figure class="w-48" *ngIf="getRecipePicture()">
+        <img [src]="getRecipePicture()"/>
+      </figure>
       <div class="flex flex-col p-4">
         <h2 class="text-xl mb-4 text-primary">{{recipe?.name ?? 'Loading ...'}}</h2>
         <ul class="flex flex-col">

@@ -13,6 +13,7 @@ import { RecipeIngredient, RecipeStep, Ingredient, MeasuringUnit } from "dat-coc
 
 import { IApiService } from "../services/i-api-service";
 import { RecipeCardComponent } from "../recipe-card/recipe-card.component";
+import { BackButtonDirective } from "../directives/back-button.directive";
 
 export interface IRecipeIngredientsFormModel {
   ingredientId: FormControl<number>,
@@ -32,7 +33,8 @@ export interface IFormGroupModel {
     CommonModule,
     RecipeCardComponent,
     RouterLink,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    BackButtonDirective
   ],
   template: `
     <div class="bg-base-100 rounded p-3">
@@ -63,10 +65,10 @@ export interface IFormGroupModel {
             <input type="checkbox" formControlName="active">
           </label>
 
-          <h3 class="text-accent text-xl">Bild</h3>
+          <h3 class="text-accent text-xl mt-3 mb-3">Bild</h3>
           <input type="file" (change)="onFileSelected($event)">
 
-          <h3 class="text-accent text-xl">Zutaten</h3>
+          <h3 class="text-accent text-xl mt-3 mb-3">Zutaten</h3>
           <ul [formArrayName]="'recipeIngredients'" class="p-3">
             <ng-container *ngFor="let recipeIngredient of formGroup.controls.recipeIngredients.controls; let i = index">
               <li [formGroupName]="i" class="list-item">
@@ -133,7 +135,7 @@ export interface IFormGroupModel {
         </form>
       </ng-container>
 
-      <a class="return-btn" routerLink="../..">Zurück</a>
+      <button class="btn btn-secondary m-4" backButton>Zurück</button>
     </div>
   `,
   styleUrls: ['./recipe-card-bartender.component.scss']
