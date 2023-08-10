@@ -23,6 +23,9 @@ import { catchError, map, Observable, tap, throwError } from "rxjs";
       </figure>
       <div class="card-body p-4">
         <h2 class="card-title text-accent">{{ recipe.name }}</h2>
+        <ng-container *ngIf="isBartenderUser">
+          Active: {{recipe.active ? "✔" : "❌"}}
+        </ng-container>
         <ul *ngIf="!isBartenderUser" class="">
           <li *ngFor="let ingredient of recipe.recipeIngredients" class="">
             {{getIngredientName$(ingredient) | async}}
