@@ -9,9 +9,9 @@ import { HeaderComponent } from "./header/header.component";
   standalone: true,
   imports: [CommonModule, RouterOutlet, RecipeCardUserComponent, HeaderComponent],
   template: `
-    <div class="flex flex-col "> <!-- bg-base-300 -->
+    <div class="flex flex-col w-full justify-center items-center"> <!-- bg-base-300 -->
       <dc-header/>
-      <main>
+      <main class="">
           <router-outlet></router-outlet>
       </main>
     </div>

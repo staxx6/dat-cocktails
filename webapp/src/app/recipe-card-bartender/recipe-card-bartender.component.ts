@@ -39,9 +39,10 @@ export interface IFormGroupModel {
   template: `
     <div class="bg-base-100 rounded p-3">
       <ng-container *ngIf="recipe">
-        <h2>{{recipe.name}}</h2>
+        <h2 class="text-secondary">{{recipe.name}}</h2>
         <img [src]="getRecipePicture()" class="w-36"/>
         Aktiv? {{recipe.active ? "✔" : "❌"}}
+        <h3 class="text-accent mt-3">Zutaten</h3>
         <ul>
           <li *ngFor="let recipeIngredient of recipe.recipeIngredients" class="ingredient">
             <!--    <input type="text">-->
@@ -49,11 +50,24 @@ export interface IFormGroupModel {
             - {{recipeIngredient.amount}} {{getMeasuringUnitName$(recipeIngredient.measuringUnitId) | async}}
           </li>
         </ul>
+        <h3 class="text-accent mt-3">Schritte</h3>
         <ol>
-          <li *ngFor="let step of recipe.steps" class="step">
-            <span class="step-text">{{step.text}}</span>
+          <li *ngFor="let step of recipe.steps; let i = index" class="step">
+            <span class="step-text">{{i}}. {{step.text}}</span>
           </li>
         </ol>
+        <ng-container *ngIf="recipe.description">
+          <h3 class="text-accent mt-3">Beschreibung</h3>
+          <p>
+            {{recipe.description}}
+          </p>
+        </ng-container>
+        <ng-container *ngIf="recipe.history">
+          <h3 class="text-accent mt-3">Geschichte</h3>
+          <p>
+            {{recipe.history}}
+          </p>
+        </ng-container>
 
         <form [formGroup]="formGroup" (ngSubmit)="onSubmit()">
           <label>
@@ -74,7 +88,7 @@ export interface IFormGroupModel {
               <li [formGroupName]="i" class="list-item">
                 <label>
                   <input type="number" formControlName="ingredientAmount"
-                         class="list-item-input list-item-input-amount">
+                         class="w-16">
                 </label>
                 <label>
                   <select formControlName="ingredientUnitId" class="list-item-input list-item-input-unit">
@@ -128,6 +142,22 @@ export interface IFormGroupModel {
             </button>
           </ol>
 
+          <h3 class="text-accent text-xl">Beschreibung</h3>
+          <textarea
+            type="text"
+            formControlName="description"
+            class="list-item-step-text m-3"
+            rows="5"
+          ></textarea>
+
+          <h3 class="text-accent text-xl">Geschichte</h3>
+          <textarea
+            type="text"
+            formControlName="history"
+            class="list-item-step-text m-3"
+            rows="5"
+          ></textarea>
+
           <p class="m-5">
             <button type="submit" class="btn btn-primary mr-3">Speichern</button>
             <button type="button" (click)="deleteRecipe()" class="btn">Rezept löschen</button>
@@ -168,7 +198,9 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
         text: '',
         // picture: ''
       })
-    ])
+    ]),
+    description: '',
+    history: ''
   })
 
   constructor(
@@ -193,6 +225,8 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
       this.createRecipeIngredientControls();
 
       this.steps = recipe?.steps ?? [];
+      this.formGroup.controls.description.setValue(recipe?.description ?? '');
+      this.formGroup.controls.history.setValue(recipe?.history ?? '');
       this.createStepControls();
     });
 
@@ -315,6 +349,12 @@ export class RecipeCardBartenderComponent extends RecipeCardComponent implements
     //   const formData = new FormData();
     //   formData.append('image', this._selectedFile);
     // }
+
+    //
+    // Other
+    //
+    this.recipe.description = formCtrls.description.value;
+    this.recipe.history = formCtrls.history.value;
 
     //
     // API

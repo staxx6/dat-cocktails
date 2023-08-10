@@ -34,6 +34,7 @@ export interface Recipe {
     history?: string,
     comment?: string,
     origin?: string;
+    description?: string;
     tags?: string[]
 }
 

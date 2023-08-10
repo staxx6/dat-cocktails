@@ -18,8 +18,8 @@ import {catchError, delay, map, Observable, of, retry, Subject, switchMap, take,
 })
 export class ApiService implements IApiService {
 
-  private readonly _baseUrl = 'http://localhost:8000';
-  // private readonly _baseUrl = 'http://192.168.178.29:8000'; // LAN test
+  // private readonly _baseUrl = 'http://localhost:8000';
+  private readonly _baseUrl = 'http://192.168.178.29:8000'; // LAN test
 
 
   private _cachedRecipesRequests = new Map<number, number[]>();
